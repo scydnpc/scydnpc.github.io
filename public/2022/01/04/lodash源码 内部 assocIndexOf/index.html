@@ -1,0 +1,187 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>(转载) lodash源码 内部 assocIndexOf | 一 个 懒 人 的 博 客</title><meta name="keywords" content="javascript,lodash"><meta name="author" content="SCYDNPC"><meta name="copyright" content="SCYDNPC"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="lodash源码分析之自减的两种形式 这个世界需要一个特定的恶人，可以供人们指名道姓，千夫所指：“全都怪你”。 ——村上春树《当我谈跑步时我谈些什么》  本文为读 lodash 源码的第六篇，后续文章会更新到这个仓库中，欢迎 star：pocket-lodash gitbook也会同步仓库的更新，gitbook地址：pocket-lodash 本篇分析的是 assocIndexOf 函数。 作用与">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(转载) lodash源码 内部 assocIndexOf">
+<meta property="og:url" content="http://example.com/2022/01/04/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20assocIndexOf/index.html">
+<meta property="og:site_name" content="一 个 懒 人 的 博 客">
+<meta property="og:description" content="lodash源码分析之自减的两种形式 这个世界需要一个特定的恶人，可以供人们指名道姓，千夫所指：“全都怪你”。 ——村上春树《当我谈跑步时我谈些什么》  本文为读 lodash 源码的第六篇，后续文章会更新到这个仓库中，欢迎 star：pocket-lodash gitbook也会同步仓库的更新，gitbook地址：pocket-lodash 本篇分析的是 assocIndexOf 函数。 作用与">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/home.JPG">
+<meta property="article:published_time" content="2022-01-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-01-29T13:58:01.006Z">
+<meta property="article:author" content="SCYDNPC">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="lodash">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/home.JPG"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/01/04/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20assocIndexOf/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '(转载) lodash源码 内部 assocIndexOf',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-29 21:58:01'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/images/home.JPG')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">一 个 懒 人 的 博 客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">(转载) lodash源码 内部 assocIndexOf</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-03T16:00:00.000Z" title="发表于 2022-01-04 00:00:00">2022-01-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-01-29T13:58:01.006Z" title="更新于 2022-01-29 21:58:01">2022-01-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="(转载) lodash源码 内部 assocIndexOf"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="lodash源码分析之自减的两种形式"><a href="#lodash源码分析之自减的两种形式" class="headerlink" title="lodash源码分析之自减的两种形式"></a>lodash源码分析之自减的两种形式</h1><blockquote>
+<p>这个世界需要一个特定的恶人，可以供人们指名道姓，千夫所指：“全都怪你”。</p>
+<p>——村上春树《当我谈跑步时我谈些什么》</p>
+</blockquote>
+<p>本文为读 lodash 源码的第六篇，后续文章会更新到这个仓库中，欢迎 star：<a target="_blank" rel="noopener" href="https://github.com/yeyuqiudeng/pocket-lodash">pocket-lodash</a></p>
+<p>gitbook也会同步仓库的更新，gitbook地址：<a target="_blank" rel="noopener" href="https://www.gitbook.com/book/yeyuqiudeng/pocket-lodash/details">pocket-lodash</a></p>
+<p>本篇分析的是 <code>assocIndexOf</code> 函数。</p>
+<h2 id="作用与用法"><a href="#作用与用法" class="headerlink" title="作用与用法"></a>作用与用法</h2><p><code>assocIndexOf</code> 是 lodash 的内部函数，之前在《<a href="hash.md">lodash源码分析之Hash缓存</a>》介绍过一种这样的数据结构：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> caches = [[<span class="string">&#x27;test1&#x27;</span>, <span class="number">1</span>],[<span class="string">&#x27;test2&#x27;</span>,<span class="number">2</span>],[<span class="string">&#x27;test3&#x27;</span>,<span class="number">3</span>]]</span><br></pre></td></tr></table></figure>
+
+<p>这是一个二维数组，每项中的第一项作为缓存对象的 <code>key</code>，第二项为缓存的值。</p>
+<p><code>assocIndexOf</code> 的作用是找出指定的 <code>key</code> 在数组中的索引值。</p>
+<p>例如要找 <code>key</code> 为 <code>tes1</code> 的索引 ：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">assocIndexOf(caches, <span class="string">&#x27;test1&#x27;</span>) <span class="comment">// 0</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> eq <span class="keyword">from</span> <span class="string">&#x27;../eq.js&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><a href="../eq.md">lodash源码分析之NaN不是NaN</a></p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">assocIndexOf</span>(<span class="params">array, key</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> &#123; length &#125; = array</span><br><span class="line">  <span class="keyword">while</span> (length--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (eq(array[length][<span class="number">0</span>], key)) &#123;</span><br><span class="line">      <span class="keyword">return</span> length</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码很精简，让 <code>length</code> 自减，调用 <code>eq</code> 函数，从二维数组的最后一项开始，逐项获取 <code>key</code> 值，与传入的 <code>key</code> 比较，遇到匹配的，马上将该项的索引返回。如果都没找到，返回 <code>-1</code> 。返回结果的规则与 <code>indexOf</code> 一致。</p>
+<h2 id="length–和–length"><a href="#length–和–length" class="headerlink" title="length–和–length"></a>length–和–length</h2><p>我们都知道自减还有另外一种前置的形式，即 <code>--length</code>，那将上面的代码改成 <code>while(--length)</code> 可不可以呢？试一下就知道了。</p>
+<p>改了之后，用 <code>caches</code> 来测试下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">assocIndexOf(caches, <span class="string">&#x27;test3&#x27;</span>) <span class="comment">// 2</span></span><br><span class="line">assocIndexOf(caches, <span class="string">&#x27;test2&#x27;</span>) <span class="comment">// 1</span></span><br><span class="line">assocIndexOf(caches, <span class="string">&#x27;test1&#x27;</span>) <span class="comment">// -1</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，改了之后，只影响到了第一项的结果，也就是终止条件有问题，根本没有遍历到第一项，但是后面的结果是正确的，也就说循环体里的 <code>length</code> 没有受到影响。</p>
+<p>你可能会有点疑惑，<code>while</code> 的终止条件比较的不是 <code>length</code> 吗？为什么 <code>length--</code> 正确，而 <code>--length</code> 不正确呢？</p>
+<p>其实 <code>while</code> 的终止条件并不是 <code>length</code> ，而是 <code>length--</code> 表达式所返回的结果。现在来看一下 <code>length--</code> 和 <code>--length</code> 所返回的结果有什么差别。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> length = <span class="number">3</span></span><br><span class="line">length-- <span class="comment">// 3</span></span><br><span class="line">length <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到， <code>length--</code> 返回的结果和自减前的一致，但是 <code>length</code> 已经减少 <code>1</code> 了。因此使用 <code>length--</code> ，最后一次进入循环体应该在 <code>length</code> 等于 <code>1</code> 的时候。</p>
+<p>再来看 <code>--length</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> length = <span class="number">3</span></span><br><span class="line">--length <span class="comment">// 2</span></span><br><span class="line">length <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+
+<p><code>--length</code> 返回的结果跟自减后的结果一致，因此最后一次进入循环体应该是 <code>length</code> 为 <code>2</code> 的时候，因此如果换成这种形式，会漏掉一次循环。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://justjavac.com/codepuzzle/2012/10/28/codepuzzle-expression-and-statement.html">代码之谜（二）- 语句与表达式</a></li>
+</ol>
+<h2 id="License"><a href="#License" class="headerlink" title="License"></a>License</h2><p><a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">署名-非商业性使用-禁止演绎 4.0 国际 (CC BY-NC-ND 4.0)</a></p>
+<p>最后，所有文章都会同步发送到微信公众号上，欢迎关注，欢迎提意见：  <img src="https://raw.githubusercontent.com/yeyuqiudeng/resource/master/images/qrcode_front-end-article.jpg"> </p>
+<p>作者：对角另一面</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/javascript/">javascript</a><a class="post-meta__tags" href="/tags/lodash/">lodash</a></div><div class="post_share"><div class="social-share" data-image="/images/home.JPG" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/01/20/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20baseFindIndex/"><img class="prev-cover" src="/images/home.JPG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">(转载) lodash源码 内部 baseFindIndex</div></div></a></div><div class="next-post pull-right"><a href="/2021/12/29/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20Hash%E7%BC%93%E5%AD%98/"><img class="next-cover" src="/images/home.JPG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">(转载) lodash源码 内部 Hash缓存</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/12/20/lodash%E6%BA%90%E7%A0%81%20chunk/" title="(转载) lodash源码 chunk"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-20</div><div class="title">(转载) lodash源码 chunk</div></div></a></div><div><a href="/2021/12/20/lodash%E6%BA%90%E7%A0%81%20compact/" title="(转载) lodash源码 compact"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-20</div><div class="title">(转载) lodash源码 compact</div></div></a></div><div><a href="/2021/12/27/lodash%E6%BA%90%E7%A0%81%20eq/" title="(转载) lodash源码 eq"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-27</div><div class="title">(转载) lodash源码 eq</div></div></a></div><div><a href="/2021/12/15/lodash%E6%BA%90%E7%A0%81%20slice/" title="(转载) lodash源码 slice"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-15</div><div class="title">(转载) lodash源码 slice</div></div></a></div><div><a href="/2021/12/29/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20Hash%E7%BC%93%E5%AD%98/" title="(转载) lodash源码 内部 Hash缓存"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-29</div><div class="title">(转载) lodash源码 内部 Hash缓存</div></div></a></div><div><a href="/2022/01/20/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20baseFindIndex/" title="(转载) lodash源码 内部 baseFindIndex"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-20</div><div class="title">(转载) lodash源码 内部 baseFindIndex</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/images/avatar.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">SCYDNPC</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#lodash%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8B%E8%87%AA%E5%87%8F%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%BD%A2%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">lodash源码分析之自减的两种形式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%E4%B8%8E%E7%94%A8%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">作用与用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96"><span class="toc-number">1.2.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">源码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#length%E2%80%93%E5%92%8C%E2%80%93length"><span class="toc-number">1.4.</span> <span class="toc-text">length–和–length</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.5.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#License"><span class="toc-number">1.6.</span> <span class="toc-text">License</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/29/webpack/" title="webpack">webpack</a><time datetime="2022-01-29T13:00:06.723Z" title="发表于 2022-01-29 21:00:06">2022-01-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/25/yarn%E5%92%8Cnpm%E5%91%BD%E4%BB%A4%E5%AF%B9%E6%AF%94/" title="yarn和npm命令对比">yarn和npm命令对比</a><time datetime="2022-01-24T16:00:00.000Z" title="发表于 2022-01-25 00:00:00">2022-01-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/20/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20baseFindIndex/" title="(转载) lodash源码 内部 baseFindIndex">(转载) lodash源码 内部 baseFindIndex</a><time datetime="2022-01-19T16:00:00.000Z" title="发表于 2022-01-20 00:00:00">2022-01-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/04/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20assocIndexOf/" title="(转载) lodash源码 内部 assocIndexOf">(转载) lodash源码 内部 assocIndexOf</a><time datetime="2022-01-03T16:00:00.000Z" title="发表于 2022-01-04 00:00:00">2022-01-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/29/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20Hash%E7%BC%93%E5%AD%98/" title="(转载) lodash源码 内部 Hash缓存">(转载) lodash源码 内部 Hash缓存</a><time datetime="2021-12-28T16:00:00.000Z" title="发表于 2021-12-29 00:00:00">2021-12-29</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient( 135deg, #E2B0FF 10%, #9F44D3 100%)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By SCYDNPC</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

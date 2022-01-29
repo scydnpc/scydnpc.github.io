@@ -1,0 +1,44 @@
+# 头部菜单
+menu:
+  主页: / || fas fa-home
+  归档: /archives/ || fas fa-archive
+  标签: /tags/ || fas fa-tags
+  分类: /categories/ || fas fa-folder-open
+
+# 主页背景图
+index_img: /images/home.JPG
+# 默认顶部图
+default_top_img: /images/home.JPG
+# 作者头像
+avatar:
+  img: /images/avatar.jpeg
+  effect: false # 頭像會一直轉圈
+cover: false
+post_meta:
+  page:
+    date_type: both # created or updated or both 主頁文章日期是創建日或者更新日或都顯示
+    date_format: relative # date/relative 顯示日期還是相對日期
+    categories: true # true or false 主頁是否顯示分類
+    tags: true # true or false 主頁是否顯示標籤
+    label: true # true or false 顯示描述性文字
+  post:
+    date_type: both # created or updated or both 文章頁日期是創建日或者更新日或都顯示
+    date_format: relative # date/relative 顯示日期還是相對日期
+    categories: true # true or false 文章頁是否顯示分類
+    tags: true # true or false 文章頁是否顯示標籤
+    label: true # true or false 顯示描述性文字
+# dark mode
+darkmode:
+  enable: true
+  # dark mode和 light mode切換按鈕
+  button: true
+  autoChangeMode: false
+# 版权
+post_copyright:
+  enable: false
+
+# footer
+footer_bg: 'linear-gradient( 135deg, #E2B0FF 10%, #9F44D3 100%)'
+
+local_search:
+  enable: true
