@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>webpack | 一 个 懒 人 的 博 客</title><meta name="keywords" content="webpack"><meta name="author" content="SCYDNPC"><meta name="copyright" content="SCYDNPC"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="webpack概念 核心概念脑图 **** #### 入口   &#96;entry&#96; 默认：&#96;.&#x2F;src&#96;  单个入口用法：entry: string|Array&lt;string&gt; 1234567891011const config &#x3D; &amp;#123;  entry: &amp;#x27;.&#x2F;path&#x2F;to&#x2F;my&#x2F;entry&#x2F;file.js&amp;#x27;&amp;#125;;&#x2F;&#x2F; entry 属性的单个入口语法，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack">
+<meta property="og:url" content="http://example.com/2022/02/06/webpack/index.html">
+<meta property="og:site_name" content="一 个 懒 人 的 博 客">
+<meta property="og:description" content="webpack概念 核心概念脑图 **** #### 入口   &#96;entry&#96; 默认：&#96;.&#x2F;src&#96;  单个入口用法：entry: string|Array&lt;string&gt; 1234567891011const config &#x3D; &amp;#123;  entry: &amp;#x27;.&#x2F;path&#x2F;to&#x2F;my&#x2F;entry&#x2F;file.js&amp;#x27;&amp;#125;;&#x2F;&#x2F; entry 属性的单个入口语法，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/avatar.jpeg">
+<meta property="article:published_time" content="2022-02-05T21:50:46.000Z">
+<meta property="article:modified_time" content="2022-02-08T05:29:49.737Z">
+<meta property="article:author" content="SCYDNPC">
+<meta property="article:tag" content="webpack">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/avatar.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/02/06/webpack/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'webpack',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-02-08 13:29:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">一 个 懒 人 的 博 客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">webpack</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-02-05T21:50:46.000Z" title="发表于 2022-02-06 05:50:46">2022-02-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-02-08T05:29:49.737Z" title="更新于 2022-02-08 13:29:49">2022-02-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="webpack"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="webpack"><a href="#webpack" class="headerlink" title="webpack"></a>webpack</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p><img src="/images/webpack_01.jpg" alt="Image text"></p>
+<center>核心概念脑图</center>
+****
+#### 入口   `entry`
+默认：`./src`
+
+<p>单个入口用法：<code>entry: string|Array&lt;string&gt;</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  <span class="attr">entry</span>: <span class="string">&#x27;./path/to/my/entry/file.js&#x27;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// entry 属性的单个入口语法，是下面的简写：</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  <span class="attr">entry</span>: &#123;</span><br><span class="line">    <span class="attr">main</span>: <span class="string">&#x27;./path/to/my/entry/file.js&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>对象语法：<code>entry: &#123;[entryChunkName: string]: string|Array&lt;string&gt;&#125;</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  <span class="attr">entry</span>: &#123;</span><br><span class="line">    <span class="attr">app</span>: <span class="string">&#x27;./src/app.js&#x27;</span>,</span><br><span class="line">    <span class="attr">vendors</span>: <span class="string">&#x27;./src/vendors.js&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="输出-output"><a href="#输出-output" class="headerlink" title="输出  output"></a>输出  <code>output</code></h4><p>默认：<code>./dist</code><br>用法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在 webpack 中配置 output 属性的最低要求是，将它的值设置为一个对象，包含 filename 和 path</span></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="attr">filename</span>: <span class="string">&#x27;bundle.js&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/home/proj/public/assets&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = config;</span><br></pre></td></tr></table></figure>
+<p><strong>多个起点的情况（使用占位符确保文件具有唯一名称）</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">entry</span>: &#123;</span><br><span class="line">    <span class="attr">app</span>: <span class="string">&#x27;./src/app.js&#x27;</span>,</span><br><span class="line">    <span class="attr">search</span>: <span class="string">&#x27;./src/search.js&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="attr">filename</span>: <span class="string">&#x27;[name].js&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: __dirname + <span class="string">&#x27;/dist&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 写入到硬盘：./dist/app.js, ./dist/search.js</span></span><br></pre></td></tr></table></figure>
+<h4 id="模式-mode"><a href="#模式-mode" class="headerlink" title="模式  mode"></a>模式  <code>mode</code></h4><p>描述：提供 <code>mode</code> 配置选项，告知 <code>webpack</code> 使用相应模式的内置优化。<br>分 <code>development</code> 和 <code>production</code></p>
+<h4 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h4><ul>
+<li>用于处理非 JavaScript 文件，webpack 自身只理解 JavaScript</li>
+<li>在 webpack 配置中定义 loader 时，要定义在 module.rules 中</li>
+</ul>
+<p>🌰：你可以使用 <code>loader</code> 告诉 <code>webpack</code> 加载 <code>CSS</code> 文件，或者将 <code>TypeScript</code> 转为 <code>JavaScript</code>。为此，首先安装相对应的 <code>loader</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev css-loader</span><br><span class="line">npm install --save-dev ts-loader</span><br></pre></td></tr></table></figure>
+
+<p>三种方式使用loader<br><strong>配置  <code>Configuration</code></strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">module</span>: &#123;</span><br><span class="line">  <span class="attr">rules</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">test</span>: <span class="regexp">/\.css$/</span>,</span><br><span class="line">      <span class="attr">use</span>: [</span><br><span class="line">        &#123; <span class="attr">loader</span>: <span class="string">&#x27;style-loader&#x27;</span> &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">loader</span>: <span class="string">&#x27;css-loader&#x27;</span>,</span><br><span class="line">          <span class="attr">options</span>: &#123;</span><br><span class="line">            <span class="attr">modules</span>: <span class="literal">true</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>内联</strong><br>可以在 import 语句或任何等效于 “import” 的方式中指定 loader。使用 ! 将资源中的 loader 分开。分开的每个部分都相对于当前目录解析。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Styles</span> <span class="keyword">from</span> <span class="string">&#x27;style-loader!css-loader?modules!./styles.css&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>CLI</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack --<span class="variable language_">module</span>-bind jade-loader --<span class="variable language_">module</span>-bind <span class="string">&#x27;css=style-loader!css-loader&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>这会对 .jade 文件使用 jade-loader，对 .css 文件使用 style-loader 和 css-loader。</p>
+<h4 id="插件-plugins"><a href="#插件-plugins" class="headerlink" title="插件  plugins"></a>插件  <code>plugins</code></h4></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/webpack/">webpack</a></div><div class="post_share"><div class="social-share" data-image="/images/avatar.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/02/06/CSS-BFC/"><img class="prev-cover" src="/images/home.JPG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CSS BFC</div></div></a></div><div class="next-post pull-right"><a href="/2022/01/30/css%E5%9F%BA%E7%A1%80%E5%A4%8D%E4%B9%A0/"><img class="next-cover" src="/images/home.JPG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">css基础复习</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/images/avatar.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">SCYDNPC</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack"><span class="toc-number">1.</span> <span class="toc-text">webpack</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%87%BA-output"><span class="toc-number">1.1.1.</span> <span class="toc-text">输出  output</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F-mode"><span class="toc-number">1.1.2.</span> <span class="toc-text">模式  mode</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#loader"><span class="toc-number">1.1.3.</span> <span class="toc-text">loader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6-plugins"><span class="toc-number">1.1.4.</span> <span class="toc-text">插件  plugins</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/02/06/CSS-BFC/" title="CSS BFC">CSS BFC</a><time datetime="2022-02-06T13:49:37.000Z" title="发表于 2022-02-06 21:49:37">2022-02-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/02/06/webpack/" title="webpack">webpack</a><time datetime="2022-02-05T21:50:46.000Z" title="发表于 2022-02-06 05:50:46">2022-02-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/30/css%E5%9F%BA%E7%A1%80%E5%A4%8D%E4%B9%A0/" title="css基础复习">css基础复习</a><time datetime="2022-01-30T03:48:46.000Z" title="发表于 2022-01-30 11:48:46">2022-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/25/yarn%E5%92%8Cnpm%E5%91%BD%E4%BB%A4%E5%AF%B9%E6%AF%94/" title="yarn和npm命令对比">yarn和npm命令对比</a><time datetime="2022-01-24T16:00:00.000Z" title="发表于 2022-01-25 00:00:00">2022-01-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/20/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20baseFindIndex/" title="(转载) lodash源码 内部 baseFindIndex">(转载) lodash源码 内部 baseFindIndex</a><time datetime="2022-01-19T16:00:00.000Z" title="发表于 2022-01-20 00:00:00">2022-01-20</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient( 135deg, #E2B0FF 10%, #9F44D3 100%)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By SCYDNPC</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
