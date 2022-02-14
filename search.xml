@@ -12,65 +12,40 @@
 <li><code>overflow</code>不为<code>visible</code></li>
 <li><code>float</code>的值不为<code>none</code></li>
 <li><code>display</code>的值为<code>inline-block</code>、<code>table-cell</code>、<code>table-caption</code></li>
-<li><code>position</code>的值为<code>absolute</code>或<code>fixed</code></li>
+<li><code>position</code>的值为<code>absolute</code>或<code>fixed</code><h4 id="特性："><a href="#特性：" class="headerlink" title="特性："></a>特性：</h4></li>
 </ul>
-<p>作者：蛙人<br>链接：<a href="https://juejin.cn/post/6950082193632788493">https://juejin.cn/post/6950082193632788493</a><br>来源：稀土掘金</p>
+<ol>
+<li><p>内部的<strong>块级</strong>盒子会在垂直方向上一个接一个的排列（可以看作BFC中有一个常规流）</p>
+<p>例如<code>&lt;html&gt;</code>是BFC，它内部写<code>div</code>、<code>p</code>元素都会占一行；</p>
+</li>
+<li><p>Box垂直方向的距离由<code>margin</code>决定。属于同一个BFC的两个相邻Box的<code>margin</code>会发生重叠；</p>
+<p><code>&lt;html&gt;</code>是BFC，所以垂直方向内部元素margin会重叠，但是直接子孙元素与该BFC上下边界<code>margin</code>不能折叠，保证了BFC内部的元素不会影响外部的元素。两个上下相邻的BFC之间折不折叠要看具体情况，如<code>display: inline-block</code> <code>float: left</code>不会折叠，而<code>overflow: hidden</code>则会折叠。</p>
+</li>
+<li><p>每一个BFC盒子的左外边距应该和包含块的左边缘相接触。即使存在浮动也是如此，除非子盒子形成了一个新的BFC。</p>
+<ul>
+<li>包含块未必就是父级元素。对于<code>position: absolute</code>来说，包含块是指第一个<code>positoin</code>不为<code>static</code>的祖先元素。</li>
+<li>BFC中的盒子应该与其自身的包含块相接触，而非与BFC盒子本身相接触。</li>
+<li>BFC中的盒子是与其包含块的 <code>left edge</code> 相接触，而不是包含块的 <code>left-border</code> 相接触。<code>left edge</code> 正确的翻译为左边缘。左边缘可能是<code>content box</code>的左边缘（非绝对定位如<code>position: relative</code> <code>float: left</code>），也可能是<code>padding box</code>的左边缘（如绝对定位<code>position: absolute</code> <code>position: fixed</code>）。</li>
+</ul>
+</li>
+<li><p>BFC就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素，反之亦然；</p>
+<p>例如子元素无论<code>margin-top: -10000px</code> <code>float: left</code> 等都不会影响到BFC外部的元素的布局，所以BFC是最好的清除浮动的方式，连浮动的文字环绕问题都能解决。</p>
+</li>
+<li><p>计算BFC的高度时，考虑BFC所包含的所有元素，连浮动元素也参与计算；</p>
+<p>这就是为什么利用BFC此特性解决浮动元素高度坍塌的问题。</p>
+</li>
+<li><p>BFC的区域不会与<code>float box</code>重叠；</p>
+<p>原理上还是相邻BFC不会相互影响，例子是两栏布局的实现，左侧<code>float：left</code>，右侧<code>overflow：auto</code>。</p>
+</li>
+</ol>
+<p>作者：蛙人<br>链接：<a href="https://juejin.cn/post/6950082193632788493">https://juejin.cn/post/6950082193632788493</a></p>
+<p>作者：幻灵尔依<br>链接：<a href="https://juejin.cn/post/6844903894313598989">https://juejin.cn/post/6844903894313598989</a></p>
 ]]></content>
       <categories>
         <category>前端</category>
       </categories>
       <tags>
         <tag>css</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git Flow &amp; 常用Git命名和操作</title>
-    <url>/2021/12/10/Git%20Flow%20&amp;%20%E5%B8%B8%E7%94%A8Git%E5%91%BD%E5%90%8D%E5%92%8C%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<h2 id="简述-Git-Flow"><a href="#简述-Git-Flow" class="headerlink" title="# 简述 Git Flow"></a># 简述 Git Flow</h2><p>简单来说，<code>Git Flow</code> 就是一套规范的代码管理流程</p>
-<h2 id="分支应用情景"><a href="#分支应用情景" class="headerlink" title="# 分支应用情景"></a># 分支应用情景</h2><ul>
-<li>在<code>Git Flow</code>中，主要的分支有<code>master</code>、<code>develop</code>、<code>hotfix</code>、<code>release</code>、<code>feature</code> 这五种分支  </li>
-<li><code>develop</code> 和 <code>master</code>会被保留，其他的随任务结束而删除  <h3 id="master-分支"><a href="#master-分支" class="headerlink" title="# master 分支"></a># master 分支</h3></li>
-<li>存放稳定上线版本</li>
-<li>这个分支的来源只能从别的分支合并过来，开发者不会直接commit到这个分支上。</li>
-<li>通常我们也会在这个分支上的提交打上版本号标签。<h3 id="develop-分支"><a href="#develop-分支" class="headerlink" title="# develop 分支"></a># develop 分支</h3></li>
-<li>这个分支主要是所有开发的基础分支。</li>
-<li>当要添加功能时，所有功能都是从这个分支切出去的，而功能分支实现后，也都会合并回来这个分支中。<h3 id="hotfix-分支"><a href="#hotfix-分支" class="headerlink" title="# hotfix 分支"></a># hotfix 分支</h3></li>
-<li>用途：处理紧急线上问题</li>
-<li>基于master分支创建</li>
-<li>修复完成，合并到master分支和develop分支中<h3 id="release-分支-预上线分支"><a href="#release-分支-预上线分支" class="headerlink" title="# release 分支 (预上线分支)"></a># release 分支 (预上线分支)</h3></li>
-<li>当<code>develop</code>分支完成需求后，就可以从<code>develop</code>分支中开一个<code>release</code>分支，进行上线前最后的测试。</li>
-<li>测试完成后，释放<code>release</code>分支将会同时合并到<code>master</code>以及<code>develop</code>分支中。<h3 id="feature分支"><a href="#feature分支" class="headerlink" title="# feature分支"></a># feature分支</h3></li>
-<li>当我们需要补充功能的时候，就会从develop分支中开一个feature分支进行功能开发。</li>
-<li>当功能实现后，在将feature分支合并到develop分支中，等待最后的测试发布。</li>
-</ul>
-<h3 id="具体场景"><a href="#具体场景" class="headerlink" title="# 具体场景"></a># 具体场景</h3><h4 id="1-新功能开发"><a href="#1-新功能开发" class="headerlink" title="1. 新功能开发"></a>1. 新功能开发</h4><blockquote>
-<p>基于<code>develop</code>，新建功能分支 <code>f1-feature</code>，切换到该分支下进行开发<br>需要多人开发时，可以推到远端分支<br>完成功能开发，将该分支合并到<code>develop</code>分支，**并删除<code>f1-feature</code>**分支</p>
-</blockquote>
-<p><strong>2021/12/24 – 更新：使用 <code>rebase</code> 整理提交</strong><br>关于新分支（命名<code>f1-feature</code> 或者 <code>feat/xxx</code> ）<br><strong>1. develop有更新内容需要同步</strong>  </p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">提交代码</span></span><br><span class="line">git add .</span><br><span class="line">git commit -m &#x27;message&#x27;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">切换 develop 拉取代码</span></span><br><span class="line">git checkout develop</span><br><span class="line">git pull</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">切换 本地分支（例：feature），合并代码</span></span><br><span class="line">git checkout feature</span><br><span class="line">git rebase -i develop</span><br></pre></td></tr></table></figure>
-<p>-i 意为合并多次提交，运行后显示前几次的提交内容如下：  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pick 281812b message1  </span><br><span class="line">pick e60c7f4 message2  </span><br></pre></td></tr></table></figure>
-<p>当需要合并所有提交的时候，保留一个<code>pick</code>，其余修改为 <code>s</code>，如下： </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pick 281812b message1  </span><br><span class="line">s e60c7f4 message2  </span><br></pre></td></tr></table></figure>
-<p><code>:wq</code> 提交修改</p>
-<p><strong>代码冲突时，修改冲突后，重新<code>add</code>提交，执行<code>git commit</code>，展示<code>message</code>，根据需求自行修改，再 <code>git rebase --continue</code></strong>  </p>
-<p><strong>2. 本地分支开发完毕需要合并到develop</strong> </p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">先提交本地分支代码 add --&gt; commit</span></span><br><span class="line">git rebase -i develop</span><br><span class="line"><span class="meta"># </span><span class="language-bash">后面的操作如1所示</span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">需要新增的步骤：切换到develop分支，merge 本地分支</span></span><br><span class="line">git merge feature</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">最后 git push</span></span><br></pre></td></tr></table></figure>
-<p>需要注意的点：在 <code>git rebase -i develop</code> 的时候，根据自身情况选择对commit是否进行合并</p>
-<h4 id="2-发布上线"><a href="#2-发布上线" class="headerlink" title="2. 发布上线"></a>2. 发布上线</h4><p>基于<code>develop</code>分支创建<code>release-0.1</code>分支作为预上线分支,有问题，在该分支上修改，最后切换到<code>develop</code>和<code>master</code>分支下合并该分支，删除<code>release-0.1</code>分支</p>
-<h4 id="3-紧急bug修复"><a href="#3-紧急bug修复" class="headerlink" title="3.紧急bug修复"></a>3.紧急bug修复</h4><p>基于<code>master</code>分支新建<code>hotfix-bug1</code>分支进行修改，修改完切换到<code>develop</code>和<code>master</code>分支下合并该分支，删除<code>hotfix-bug1</code>分支</p>
-<h3 id="常用git操作"><a href="#常用git操作" class="headerlink" title="# 常用git操作"></a># 常用git操作</h3><p><strong>分支相关</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 查看本地分支</span><br><span class="line">git branch</span><br><span class="line">返回🌰</span><br><span class="line">*master</span><br><span class="line"></span><br><span class="line">// 查看远程分支</span><br><span class="line">git branch -r</span><br><span class="line">返回🌰</span><br><span class="line">origin/master</span><br><span class="line"></span><br><span class="line">// 查看本地和远程分支</span><br><span class="line">git branch -a</span><br><span class="line">返回🌰</span><br><span class="line">*master</span><br><span class="line"> remotes/origin/master</span><br><span class="line"> </span><br><span class="line">// 切换分支</span><br><span class="line">git checkout &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 创建并切换到该分支</span><br><span class="line">git checkout -b &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 删除分支</span><br><span class="line">git branch -d &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 删除远端分支</span><br><span class="line">git push origin -d &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 重命名分支</span><br><span class="line">git branch -m &lt;oldbranch-name&gt; &lt;newbranch-name&gt;</span><br><span class="line"></span><br><span class="line">// 合并指定分支到当前分支</span><br><span class="line">git merge &lt;branch-name&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>git</category>
-      </categories>
-      <tags>
-        <tag>git flow</tag>
-        <tag>git命令</tag>
       </tags>
   </entry>
   <entry>
@@ -247,13 +222,53 @@
 </ul>
 <p><code>vertical-align</code>的作用</p>
 <p><strong>vertical-align属性起作用的前提必须是作用在内联元素上。</strong> 即<code>display</code>计算值为<code>inline</code> <code>inline-block</code> <code>inline-table</code> <code>table-cell</code>的元素。所以如果元素设置了<code>float: left</code>或者<code>position: absolute</code>，则其<code>vertical-align</code>属性不能生效，因为此时元素的<code>display</code>计算值为<code>block</code>了。</p>
-<h3 id="float属性的特性"><a href="#float属性的特性" class="headerlink" title="float属性的特性"></a><code>float</code>属性的特性</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者：幻灵尔依<br>链接：<a href="https://juejin.cn/post/6844903894313598989">https://juejin.cn/post/6844903894313598989</a><br>来源：稀土掘金</p>
+<h3 id="float属性的特性"><a href="#float属性的特性" class="headerlink" title="float属性的特性"></a><code>float</code>属性的特性</h3><p><code>float</code>属性起初只是为了实现“文字环绕图片”的效果</p>
+<p><img src="/images/%E6%96%87%E5%AD%97%E7%8E%AF%E7%BB%95.png" alt="文字环绕"></p>
+<h4 id="关于float属性的特性："><a href="#关于float属性的特性：" class="headerlink" title="关于float属性的特性："></a>关于float属性的特性：</h4><ol>
+<li><p>包裹性：即此时元素<code>width</code>会像<code>height</code>一样由子元素决定，而不是默认撑满父元素。</p>
+<p>![如图此时为文字宽度和高度](/images/float 包裹性.png)</p>
+</li>
+<li><p>块状化并格式化上下文：设置<code>float: left</code>之后，<code>display</code>的计算值变成<code>block</code>。格式化上下文是指会创建一个<code>BFC</code>。</p>
+</li>
+<li><p>没有<code>margin</code>合并</p>
+</li>
+<li><p>脱离文档流：与float并列的元素b是会和该元素重叠，（但是b中的行框盒子不会（例如文字，因为浮动和行框元素同属BFC，不互相影响），这就是形成环绕文字的原因）</p>
+</li>
+</ol>
+<h4 id="解决浮动的办法：设置clear：both："><a href="#解决浮动的办法：设置clear：both：" class="headerlink" title="解决浮动的办法：设置clear：both："></a>解决浮动的办法：设置<code>clear：both</code>：</h4><p><code>clear</code>的定义是：元素盒子的边不能与前面的浮动元素相邻。也就是虽然浮动元素高度坍塌，但是设置了<code>clear: both</code>的元素却将其高度视为仍然占据位置。</p>
+<p><strong><code>clear</code>只能作用于块级元素</strong></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者：幻灵尔依<br>链接：<a href="https://juejin.cn/post/6844903894313598989">https://juejin.cn/post/6844903894313598989</a><br>来源：稀土掘金</p>
 ]]></content>
       <categories>
         <category>前端</category>
       </categories>
       <tags>
         <tag>css</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>(转载) lodash源码 chunk</title>
+    <url>/2021/12/20/lodash%E6%BA%90%E7%A0%81%20chunk/</url>
+    <content><![CDATA[<h2 id="chunk-array-size-1"><a href="#chunk-array-size-1" class="headerlink" title="_.chunk(array, [size=1])"></a>_.chunk(array, [size=1])</h2><blockquote>
+<p>介绍：将数组（<code>array</code>）拆分成多个 <code>size</code> 长度的区块，并将这些区块组成一个新数组。 如果array 无法被分割成全部等长的区块，那么最后剩余的元素将组成一个区块。<br>参数：<br><code>array</code> (Array): 需要处理的数组<br><code>[size=1]</code> (number): 每个数组区块的长度</p>
+</blockquote>
+<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><p><code>chunk</code> 函数在前端可以用来缓解一些性能问题。例如大量的 <code>DOM</code> 操作，可以分块让浏览器在空闲的时候处理，避免页面卡死。如下面的代码，向页面中插入大量的 <code>DOM</code> 。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [] <span class="comment">// 1万条数据</span></span><br><span class="line"><span class="keyword">const</span> chunks = _.<span class="title function_">chunk</span>(arr, <span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> append = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (chunks.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> current = chunks.<span class="title function_">pop</span>()</span><br><span class="line">    current.<span class="title function_">forEach</span>(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> node = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;div&#x27;</span>)</span><br><span class="line">      node.<span class="property">innerText</span> = item</span><br><span class="line">      <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(node)</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="built_in">setTimeout</span>(append, <span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">append</span>()</span><br></pre></td></tr></table></figure>
+<h4 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> slice <span class="keyword">from</span> <span class="string">&#x27;./slice.js&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p><code>chunk</code> 的原理归结起来就是切割和放置。  </p>
+<p><code>chunk</code> 最后返回的结果如<code>[[1],[1],[1]]</code>的形式，放置就是将切割下来的块放置到数组容器中。  </p>
+<p>那要怎样切割呢？</p>
+<p>因为指定了大小，因此切割跟切蛋糕很像，参数 <code>size</code> 是尺子，测好每块的长度，<code>slice</code> 函数是刀， 将数组一块一块切出来。  例如有 <code>[1,2,3,4,5]</code> 这个数组，<code>size</code> 指定为 <code>2</code>，则第一次切割会得到 <code>[1,2]</code> 的块，第二次切割得到 <code>[4,5]</code>，剩下的是 <code>[5]</code> 。这个数组最终会被切为三块。</p>
+<h4 id="源码总览"><a href="#源码总览" class="headerlink" title="源码总览"></a>源码总览</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">chunk</span>(<span class="params">array, size</span>) &#123;</span><br><span class="line">  <span class="comment">// 确保 length 存在 且 size 比 1 大</span></span><br><span class="line">  size = <span class="title class_">Math</span>.<span class="title function_">max</span>(size, <span class="number">0</span>)</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.<span class="property">length</span></span><br><span class="line">  <span class="comment">// 否则 返回空数组</span></span><br><span class="line">  <span class="keyword">if</span> (!length || size &lt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> []</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> index = <span class="number">0</span></span><br><span class="line">  <span class="keyword">let</span> resIndex = <span class="number">0</span></span><br><span class="line">  <span class="comment">// 新建数组result，长度为分割后块的数量</span></span><br><span class="line">  <span class="keyword">const</span> result = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="title class_">Math</span>.<span class="title function_">ceil</span>(length / size))</span><br><span class="line">  <span class="comment">// 切割 array 放于 result 中，注意 index，每次切割，index增加size长度</span></span><br><span class="line">  <span class="keyword">while</span> (index &lt; length) &#123;</span><br><span class="line">    result[resIndex++] = <span class="title function_">slice</span>(array, index, (index += size))</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h4><p><code>Math.round()</code>  “四舍五入”， 该函数返回的是一个四舍五入后的的整数<br><code>Math.ceil()</code>  “向上取整”， 即小数部分直接舍去，并向正数部分进1<br><code>Math.floor()</code>  “向下取整” ，即小数部分直接舍去</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
+        <tag>lodash</tag>
       </tags>
   </entry>
   <entry>
@@ -302,28 +317,53 @@
       </tags>
   </entry>
   <entry>
-    <title>(转载) lodash源码 chunk</title>
-    <url>/2021/12/20/lodash%E6%BA%90%E7%A0%81%20chunk/</url>
-    <content><![CDATA[<h2 id="chunk-array-size-1"><a href="#chunk-array-size-1" class="headerlink" title="_.chunk(array, [size=1])"></a>_.chunk(array, [size=1])</h2><blockquote>
-<p>介绍：将数组（<code>array</code>）拆分成多个 <code>size</code> 长度的区块，并将这些区块组成一个新数组。 如果array 无法被分割成全部等长的区块，那么最后剩余的元素将组成一个区块。<br>参数：<br><code>array</code> (Array): 需要处理的数组<br><code>[size=1]</code> (number): 每个数组区块的长度</p>
+    <title>Git Flow &amp; 常用Git命名和操作</title>
+    <url>/2021/12/10/Git%20Flow%20&amp;%20%E5%B8%B8%E7%94%A8Git%E5%91%BD%E5%90%8D%E5%92%8C%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h2 id="简述-Git-Flow"><a href="#简述-Git-Flow" class="headerlink" title="# 简述 Git Flow"></a># 简述 Git Flow</h2><p>简单来说，<code>Git Flow</code> 就是一套规范的代码管理流程</p>
+<h2 id="分支应用情景"><a href="#分支应用情景" class="headerlink" title="# 分支应用情景"></a># 分支应用情景</h2><ul>
+<li>在<code>Git Flow</code>中，主要的分支有<code>master</code>、<code>develop</code>、<code>hotfix</code>、<code>release</code>、<code>feature</code> 这五种分支  </li>
+<li><code>develop</code> 和 <code>master</code>会被保留，其他的随任务结束而删除  <h3 id="master-分支"><a href="#master-分支" class="headerlink" title="# master 分支"></a># master 分支</h3></li>
+<li>存放稳定上线版本</li>
+<li>这个分支的来源只能从别的分支合并过来，开发者不会直接commit到这个分支上。</li>
+<li>通常我们也会在这个分支上的提交打上版本号标签。<h3 id="develop-分支"><a href="#develop-分支" class="headerlink" title="# develop 分支"></a># develop 分支</h3></li>
+<li>这个分支主要是所有开发的基础分支。</li>
+<li>当要添加功能时，所有功能都是从这个分支切出去的，而功能分支实现后，也都会合并回来这个分支中。<h3 id="hotfix-分支"><a href="#hotfix-分支" class="headerlink" title="# hotfix 分支"></a># hotfix 分支</h3></li>
+<li>用途：处理紧急线上问题</li>
+<li>基于master分支创建</li>
+<li>修复完成，合并到master分支和develop分支中<h3 id="release-分支-预上线分支"><a href="#release-分支-预上线分支" class="headerlink" title="# release 分支 (预上线分支)"></a># release 分支 (预上线分支)</h3></li>
+<li>当<code>develop</code>分支完成需求后，就可以从<code>develop</code>分支中开一个<code>release</code>分支，进行上线前最后的测试。</li>
+<li>测试完成后，释放<code>release</code>分支将会同时合并到<code>master</code>以及<code>develop</code>分支中。<h3 id="feature分支"><a href="#feature分支" class="headerlink" title="# feature分支"></a># feature分支</h3></li>
+<li>当我们需要补充功能的时候，就会从develop分支中开一个feature分支进行功能开发。</li>
+<li>当功能实现后，在将feature分支合并到develop分支中，等待最后的测试发布。</li>
+</ul>
+<h3 id="具体场景"><a href="#具体场景" class="headerlink" title="# 具体场景"></a># 具体场景</h3><h4 id="1-新功能开发"><a href="#1-新功能开发" class="headerlink" title="1. 新功能开发"></a>1. 新功能开发</h4><blockquote>
+<p>基于<code>develop</code>，新建功能分支 <code>f1-feature</code>，切换到该分支下进行开发<br>需要多人开发时，可以推到远端分支<br>完成功能开发，将该分支合并到<code>develop</code>分支，**并删除<code>f1-feature</code>**分支</p>
 </blockquote>
-<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><p><code>chunk</code> 函数在前端可以用来缓解一些性能问题。例如大量的 <code>DOM</code> 操作，可以分块让浏览器在空闲的时候处理，避免页面卡死。如下面的代码，向页面中插入大量的 <code>DOM</code> 。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [] <span class="comment">// 1万条数据</span></span><br><span class="line"><span class="keyword">const</span> chunks = _.<span class="title function_">chunk</span>(arr, <span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> append = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (chunks.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> current = chunks.<span class="title function_">pop</span>()</span><br><span class="line">    current.<span class="title function_">forEach</span>(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> node = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;div&#x27;</span>)</span><br><span class="line">      node.<span class="property">innerText</span> = item</span><br><span class="line">      <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(node)</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="built_in">setTimeout</span>(append, <span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">append</span>()</span><br></pre></td></tr></table></figure>
-<h4 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> slice <span class="keyword">from</span> <span class="string">&#x27;./slice.js&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p><code>chunk</code> 的原理归结起来就是切割和放置。  </p>
-<p><code>chunk</code> 最后返回的结果如<code>[[1],[1],[1]]</code>的形式，放置就是将切割下来的块放置到数组容器中。  </p>
-<p>那要怎样切割呢？</p>
-<p>因为指定了大小，因此切割跟切蛋糕很像，参数 <code>size</code> 是尺子，测好每块的长度，<code>slice</code> 函数是刀， 将数组一块一块切出来。  例如有 <code>[1,2,3,4,5]</code> 这个数组，<code>size</code> 指定为 <code>2</code>，则第一次切割会得到 <code>[1,2]</code> 的块，第二次切割得到 <code>[4,5]</code>，剩下的是 <code>[5]</code> 。这个数组最终会被切为三块。</p>
-<h4 id="源码总览"><a href="#源码总览" class="headerlink" title="源码总览"></a>源码总览</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">chunk</span>(<span class="params">array, size</span>) &#123;</span><br><span class="line">  <span class="comment">// 确保 length 存在 且 size 比 1 大</span></span><br><span class="line">  size = <span class="title class_">Math</span>.<span class="title function_">max</span>(size, <span class="number">0</span>)</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.<span class="property">length</span></span><br><span class="line">  <span class="comment">// 否则 返回空数组</span></span><br><span class="line">  <span class="keyword">if</span> (!length || size &lt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> []</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> index = <span class="number">0</span></span><br><span class="line">  <span class="keyword">let</span> resIndex = <span class="number">0</span></span><br><span class="line">  <span class="comment">// 新建数组result，长度为分割后块的数量</span></span><br><span class="line">  <span class="keyword">const</span> result = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="title class_">Math</span>.<span class="title function_">ceil</span>(length / size))</span><br><span class="line">  <span class="comment">// 切割 array 放于 result 中，注意 index，每次切割，index增加size长度</span></span><br><span class="line">  <span class="keyword">while</span> (index &lt; length) &#123;</span><br><span class="line">    result[resIndex++] = <span class="title function_">slice</span>(array, index, (index += size))</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2021/12/24 – 更新：使用 <code>rebase</code> 整理提交</strong><br>关于新分支（命名<code>f1-feature</code> 或者 <code>feat/xxx</code> ）<br><strong>1. develop有更新内容需要同步</strong>  </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">提交代码</span></span><br><span class="line">git add .</span><br><span class="line">git commit -m &#x27;message&#x27;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">切换 develop 拉取代码</span></span><br><span class="line">git checkout develop</span><br><span class="line">git pull</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">切换 本地分支（例：feature），合并代码</span></span><br><span class="line">git checkout feature</span><br><span class="line">git rebase -i develop</span><br></pre></td></tr></table></figure>
+<p>-i 意为合并多次提交，运行后显示前几次的提交内容如下：  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pick 281812b message1  </span><br><span class="line">pick e60c7f4 message2  </span><br></pre></td></tr></table></figure>
+<p>当需要合并所有提交的时候，保留一个<code>pick</code>，其余修改为 <code>s</code>，如下： </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pick 281812b message1  </span><br><span class="line">s e60c7f4 message2  </span><br></pre></td></tr></table></figure>
+<p><code>:wq</code> 提交修改</p>
+<p><strong>代码冲突时，修改冲突后，重新<code>add</code>提交，执行<code>git commit</code>，展示<code>message</code>，根据需求自行修改，再 <code>git rebase --continue</code></strong>  </p>
+<p><strong>2. 本地分支开发完毕需要合并到develop</strong> </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">先提交本地分支代码 add --&gt; commit</span></span><br><span class="line">git rebase -i develop</span><br><span class="line"><span class="meta"># </span><span class="language-bash">后面的操作如1所示</span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">需要新增的步骤：切换到develop分支，merge 本地分支</span></span><br><span class="line">git merge feature</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">最后 git push</span></span><br></pre></td></tr></table></figure>
+<p>需要注意的点：在 <code>git rebase -i develop</code> 的时候，根据自身情况选择对commit是否进行合并</p>
+<h4 id="2-发布上线"><a href="#2-发布上线" class="headerlink" title="2. 发布上线"></a>2. 发布上线</h4><p>基于<code>develop</code>分支创建<code>release-0.1</code>分支作为预上线分支,有问题，在该分支上修改，最后切换到<code>develop</code>和<code>master</code>分支下合并该分支，删除<code>release-0.1</code>分支</p>
+<h4 id="3-紧急bug修复"><a href="#3-紧急bug修复" class="headerlink" title="3.紧急bug修复"></a>3.紧急bug修复</h4><p>基于<code>master</code>分支新建<code>hotfix-bug1</code>分支进行修改，修改完切换到<code>develop</code>和<code>master</code>分支下合并该分支，删除<code>hotfix-bug1</code>分支</p>
+<h3 id="常用git操作"><a href="#常用git操作" class="headerlink" title="# 常用git操作"></a># 常用git操作</h3><p><strong>分支相关</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 查看本地分支</span><br><span class="line">git branch</span><br><span class="line">返回🌰</span><br><span class="line">*master</span><br><span class="line"></span><br><span class="line">// 查看远程分支</span><br><span class="line">git branch -r</span><br><span class="line">返回🌰</span><br><span class="line">origin/master</span><br><span class="line"></span><br><span class="line">// 查看本地和远程分支</span><br><span class="line">git branch -a</span><br><span class="line">返回🌰</span><br><span class="line">*master</span><br><span class="line"> remotes/origin/master</span><br><span class="line"> </span><br><span class="line">// 切换分支</span><br><span class="line">git checkout &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 创建并切换到该分支</span><br><span class="line">git checkout -b &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 删除分支</span><br><span class="line">git branch -d &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 删除远端分支</span><br><span class="line">git push origin -d &lt;branch-name&gt;</span><br><span class="line"></span><br><span class="line">// 重命名分支</span><br><span class="line">git branch -m &lt;oldbranch-name&gt; &lt;newbranch-name&gt;</span><br><span class="line"></span><br><span class="line">// 合并指定分支到当前分支</span><br><span class="line">git merge &lt;branch-name&gt;</span><br></pre></td></tr></table></figure>
 
-<h4 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h4><p><code>Math.round()</code>  “四舍五入”， 该函数返回的是一个四舍五入后的的整数<br><code>Math.ceil()</code>  “向上取整”， 即小数部分直接舍去，并向正数部分进1<br><code>Math.floor()</code>  “向下取整” ，即小数部分直接舍去</p>
+
+
 ]]></content>
       <categories>
-        <category>前端</category>
+        <category>git</category>
       </categories>
       <tags>
-        <tag>javascript</tag>
-        <tag>lodash</tag>
+        <tag>git flow</tag>
+        <tag>git命令</tag>
       </tags>
   </entry>
   <entry>
@@ -538,120 +578,6 @@
       </tags>
   </entry>
   <entry>
-    <title>(转载) lodash源码 内部 assocIndexOf</title>
-    <url>/2022/01/04/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20assocIndexOf/</url>
-    <content><![CDATA[<h1 id="lodash源码分析之自减的两种形式"><a href="#lodash源码分析之自减的两种形式" class="headerlink" title="lodash源码分析之自减的两种形式"></a>lodash源码分析之自减的两种形式</h1><blockquote>
-<p>这个世界需要一个特定的恶人，可以供人们指名道姓，千夫所指：“全都怪你”。</p>
-<p>——村上春树《当我谈跑步时我谈些什么》</p>
-</blockquote>
-<p>本文为读 lodash 源码的第六篇，后续文章会更新到这个仓库中，欢迎 star：<a href="https://github.com/yeyuqiudeng/pocket-lodash">pocket-lodash</a></p>
-<p>gitbook也会同步仓库的更新，gitbook地址：<a href="https://www.gitbook.com/book/yeyuqiudeng/pocket-lodash/details">pocket-lodash</a></p>
-<p>本篇分析的是 <code>assocIndexOf</code> 函数。</p>
-<h2 id="作用与用法"><a href="#作用与用法" class="headerlink" title="作用与用法"></a>作用与用法</h2><p><code>assocIndexOf</code> 是 lodash 的内部函数，之前在《<a href="hash.md">lodash源码分析之Hash缓存</a>》介绍过一种这样的数据结构：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> caches = [[<span class="string">&#x27;test1&#x27;</span>, <span class="number">1</span>],[<span class="string">&#x27;test2&#x27;</span>,<span class="number">2</span>],[<span class="string">&#x27;test3&#x27;</span>,<span class="number">3</span>]]</span><br></pre></td></tr></table></figure>
-
-<p>这是一个二维数组，每项中的第一项作为缓存对象的 <code>key</code>，第二项为缓存的值。</p>
-<p><code>assocIndexOf</code> 的作用是找出指定的 <code>key</code> 在数组中的索引值。</p>
-<p>例如要找 <code>key</code> 为 <code>tes1</code> 的索引 ：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test1&#x27;</span>) <span class="comment">// 0</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> eq <span class="keyword">from</span> <span class="string">&#x27;../eq.js&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><a href="../eq.md">lodash源码分析之NaN不是NaN</a></p>
-<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">assocIndexOf</span>(<span class="params">array, key</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> &#123; length &#125; = array</span><br><span class="line">  <span class="keyword">while</span> (length--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">eq</span>(array[length][<span class="number">0</span>], key)) &#123;</span><br><span class="line">      <span class="keyword">return</span> length</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码很精简，让 <code>length</code> 自减，调用 <code>eq</code> 函数，从二维数组的最后一项开始，逐项获取 <code>key</code> 值，与传入的 <code>key</code> 比较，遇到匹配的，马上将该项的索引返回。如果都没找到，返回 <code>-1</code> 。返回结果的规则与 <code>indexOf</code> 一致。</p>
-<h2 id="length–和–length"><a href="#length–和–length" class="headerlink" title="length–和–length"></a>length–和–length</h2><p>我们都知道自减还有另外一种前置的形式，即 <code>--length</code>，那将上面的代码改成 <code>while(--length)</code> 可不可以呢？试一下就知道了。</p>
-<p>改了之后，用 <code>caches</code> 来测试下：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test3&#x27;</span>) <span class="comment">// 2</span></span><br><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test2&#x27;</span>) <span class="comment">// 1</span></span><br><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test1&#x27;</span>) <span class="comment">// -1</span></span><br></pre></td></tr></table></figure>
-
-<p>可以看到，改了之后，只影响到了第一项的结果，也就是终止条件有问题，根本没有遍历到第一项，但是后面的结果是正确的，也就说循环体里的 <code>length</code> 没有受到影响。</p>
-<p>你可能会有点疑惑，<code>while</code> 的终止条件比较的不是 <code>length</code> 吗？为什么 <code>length--</code> 正确，而 <code>--length</code> 不正确呢？</p>
-<p>其实 <code>while</code> 的终止条件并不是 <code>length</code> ，而是 <code>length--</code> 表达式所返回的结果。现在来看一下 <code>length--</code> 和 <code>--length</code> 所返回的结果有什么差别。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> length = <span class="number">3</span></span><br><span class="line">length-- <span class="comment">// 3</span></span><br><span class="line">length <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
-
-<p>可以看到， <code>length--</code> 返回的结果和自减前的一致，但是 <code>length</code> 已经减少 <code>1</code> 了。因此使用 <code>length--</code> ，最后一次进入循环体应该在 <code>length</code> 等于 <code>1</code> 的时候。</p>
-<p>再来看 <code>--length</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> length = <span class="number">3</span></span><br><span class="line">--length <span class="comment">// 2</span></span><br><span class="line">length <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
-
-<p><code>--length</code> 返回的结果跟自减后的结果一致，因此最后一次进入循环体应该是 <code>length</code> 为 <code>2</code> 的时候，因此如果换成这种形式，会漏掉一次循环。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="http://justjavac.com/codepuzzle/2012/10/28/codepuzzle-expression-and-statement.html">代码之谜（二）- 语句与表达式</a></li>
-</ol>
-<h2 id="License"><a href="#License" class="headerlink" title="License"></a>License</h2><p><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">署名-非商业性使用-禁止演绎 4.0 国际 (CC BY-NC-ND 4.0)</a></p>
-<p>最后，所有文章都会同步发送到微信公众号上，欢迎关注，欢迎提意见：  <img src="https://raw.githubusercontent.com/yeyuqiudeng/resource/master/images/qrcode_front-end-article.jpg"> </p>
-<p>作者：对角另一面</p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>javascript</tag>
-        <tag>lodash</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>(转载) lodash源码 内部 baseFindIndex</title>
-    <url>/2022/01/20/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20baseFindIndex/</url>
-    <content><![CDATA[<h1 id="lodash源码分析之baseFindIndex中的运算符优先级"><a href="#lodash源码分析之baseFindIndex中的运算符优先级" class="headerlink" title="lodash源码分析之baseFindIndex中的运算符优先级"></a>lodash源码分析之baseFindIndex中的运算符优先级</h1><blockquote>
-<p>我悟出权力本来就是不讲理的——蟑螂就是海米；也悟出要造反，内心必须强大到足以承受任何后果才行。</p>
-<p>——北岛《城门开》</p>
-</blockquote>
-<p>本文为读 lodash 源码的第十篇，后续文章会更新到这个仓库中，欢迎 star：<a href="https://github.com/yeyuqiudeng/pocket-lodash">pocket-lodash</a></p>
-<p>gitbook也会同步仓库的更新，gitbook地址：<a href="https://www.gitbook.com/book/yeyuqiudeng/pocket-lodash/details">pocket-lodash</a></p>
-<h2 id="作用与用法"><a href="#作用与用法" class="headerlink" title="作用与用法"></a>作用与用法</h2><p><code>baseFindIndex</code> 是内部方法，其作用类似于ES6的 <code>findIndex</code>，查找符合条件的第一个元素的索引。</p>
-<p><code>baseFindIndex</code> 除了从前向后查找外，还可以从后向前查找。</p>
-<p>用法如下：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title function_">baseFindIndex</span>([<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>], <span class="keyword">function</span>(<span class="params">val, index, array</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> val &gt; <span class="number">1</span></span><br><span class="line">&#125;, <span class="number">1</span>) <span class="comment">// 从前向后查找，从索引1开始查找，返回2</span></span><br><span class="line"><span class="title function_">baseFindIndex</span>([<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>], <span class="keyword">function</span>(<span class="params">val, index, array</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> val &gt; <span class="number">1</span></span><br><span class="line">&#125;, <span class="number">1</span>, <span class="literal">true</span>) <span class="comment">// 从后向前查找，从索引1开始查找，返回3</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">baseFindIndex</span>(<span class="params">array, predicate, fromIndex, fromRight</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; length &#125; = array</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex + (fromRight ? <span class="number">1</span> : -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> ((fromRight ? index-- : ++index &lt; length)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">predicate</span>(array[index], index, array)) &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码再次展示了 lodash 的特点，短小精悍！</p>
-<p>这次读源码我们从里往外看。</p>
-<p>从代码中很容易看到，<code>predicate</code> 是传递进来的函数，在 <code>baseFindIndex</code> 调用该函数，如果返回的结果为真值，则中止查找，返回索引。</p>
-<h3 id="运算符优先级"><a href="#运算符优先级" class="headerlink" title="运算符优先级"></a>运算符优先级</h3><p>我们再往外看，看看 <code>while</code> 的循环条件：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">fromRight ? index-- : ++index &lt; length</span><br></pre></td></tr></table></figure>
-
-<p>现在问题来了，这个三元表达式有两种可能，一种是：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">(fromRight ? index-- : ++index) &lt; length</span><br></pre></td></tr></table></figure>
-
-<p>一种是：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">fromRight ? index-- : (++index &lt; length)</span><br></pre></td></tr></table></figure>
-
-<p>究竟是那一种呢？这就要看运算符的优化级了，下面这个表是 MDN 上的截图：</p>
-<p><img src="../images/baseFindIndex.png"></p>
-<p>这个表将优化级划分成了20个级别，数字越大，优化级越高。</p>
-<p>从表中可以看到，比较运算符的优先级为11，而三元表达式（条件运算符）的优化级为4，因此可以确定比较运算符的优先级要比三元表达式的要高，循环条件其实等价于第二种写法。</p>
-<h3 id="增减迷局"><a href="#增减迷局" class="headerlink" title="增减迷局"></a>增减迷局</h3><p>再往上看，可以看到这句代码：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> index = fromIndex + (fromRight ? <span class="number">1</span> : -<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-<p>在向后查找时， <code>index</code> 减少了1，而向前查找时，<code>index</code> 增加了1，为什么要这样做呢？</p>
-<p>再结合循环条件看下：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">fromRight ? index-- : ++index &lt; length</span><br></pre></td></tr></table></figure>
-
-<p>在向前查找时，使用的是 <code>index--</code> 表达式的运算结果，向后查找时，使用的是 <code>++index &lt; lenth</code> 表达式的运算结果。</p>
-<p>从上表中也可以看出前缀自增比比较运算符的优化级要高。</p>
-<p>前缀自增返回的是自增后的结果，而在循环条件中就要将索引 <code>index</code> 增加1，这样会忽略掉第一个需要遍历的元素，作为补救，在开始遍历前，需要将 <code>index</code> 减少1。</p>
-<p>同理，在向前查找时，需要将索引增加1，因为在遍历开始时就已经将索引减少1。</p>
-<p>那又为什么向前查找时用的是后缀自减，而不是用前缀自减呢？</p>
-<p>因为在向前查找时，最终要查找到数组索引 <code>0</code> 的位置，后缀自减返回的是自减前的数值，因此当 <code>index</code> 为 <code>1</code> 时，自减后的 <code>index</code> 为 <code>0</code> ，但是在循环条件中依然拿 <code>1</code> 来进行判断，所以使得索引 <code>0</code> 得以进入循环体。</p>
-<p>关于前缀自增/减和后缀自增/减的区别可以看《<a href="./assocIndexOf.md">lodash源码分析之自减的两种形式</a>》。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence">MDN:运算符优先级</a></li>
-</ol>
-<h2 id="License"><a href="#License" class="headerlink" title="License"></a>License</h2><p><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">署名-非商业性使用-禁止演绎 4.0 国际 (CC BY-NC-ND 4.0)</a></p>
-<p>最后，所有文章都会同步发送到微信公众号上，欢迎关注,欢迎提意见：  <img src="https://raw.githubusercontent.com/yeyuqiudeng/resource/master/images/qrcode_front-end-article.jpg"> </p>
-<p>作者：对角另一面</p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>javascript</tag>
-        <tag>lodash</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>vue2 总结</title>
     <url>/2022/02/09/vue2-%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<h3 id="Vue的优点和特性"><a href="#Vue的优点和特性" class="headerlink" title="Vue的优点和特性"></a>Vue的优点和特性</h3><ul>
@@ -778,7 +704,7 @@
 
 
 
-<h3 id="解析器-Compile"><a href="#解析器-Compile" class="headerlink" title="解析器 Compile"></a>解析器 <code>Compile</code></h3><p><img src="" alt="vue2 模板渲染过程"></p>
+<h3 id="解析器-Compile"><a href="#解析器-Compile" class="headerlink" title="解析器 Compile"></a>解析器 <code>Compile</code></h3><p>![vue2 模板渲染过程](/images/vue2 模板渲染过程.jpg)</p>
 <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者：沐华<br>链接：<a href="https://juejin.cn/post/7010594233253888013">https://juejin.cn/post/7010594233253888013</a></p>
 <p>作者：小肥羊丶<br>链接：<a href="https://juejin.cn/post/6844904147997687821">https://juejin.cn/post/6844904147997687821</a></p>
 <p>作者：zeroone001<br>链接：<a href="https://juejin.cn/post/7013227096096899085">https://juejin.cn/post/7013227096096899085</a></p>
@@ -794,35 +720,117 @@
       </tags>
   </entry>
   <entry>
-    <title>promise</title>
-    <url>/2021/12/03/promise/</url>
-    <content><![CDATA[<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>Promise 是异步编程的一种解决方案： 从语法上讲，promise是一个对象，从它可以获取异步操作的消息；从本意上讲，它是承诺，承诺它过一段时间会给你一个结果。</p>
-<h3 id="promise-有哪三种状态："><a href="#promise-有哪三种状态：" class="headerlink" title="promise 有哪三种状态："></a>promise 有哪三种状态：</h3><p>pending(等待态)、fulfiled(成功态)、rejected(失败态)</p>
-<h3 id="promise-使用来解决什么问题的？"><a href="#promise-使用来解决什么问题的？" class="headerlink" title="promise 使用来解决什么问题的？"></a>promise 使用来解决什么问题的？</h3><p>回调地狱，代码难以维护， 常常第一个的函数的输出是第二个函数的输入这种现象<br>promise可以支持多个并发的请求，获取并发请求中的数据<br>这个promise可以解决异步的问题，本身不能说promise是异步的</p>
-<h3 id="promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。"><a href="#promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。" class="headerlink" title="promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。"></a>promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。</h3><p>promise的构造函数接收一个参数：函数，并且这个函数需要传入两个参数：  </p>
-<ul>
-<li>resolve ：异步操作执行成功后的回调函数</li>
-<li>reject：异步操作执行失败后的回调函数  </li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//做一些异步操作</span></span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;执行完成&#x27;</span>);</span><br><span class="line">        <span class="title function_">resolve</span>(<span class="string">&#x27;我是成功！！&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+    <title>(转载) lodash源码 内部 assocIndexOf</title>
+    <url>/2022/01/04/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20assocIndexOf/</url>
+    <content><![CDATA[<h1 id="lodash源码分析之自减的两种形式"><a href="#lodash源码分析之自减的两种形式" class="headerlink" title="lodash源码分析之自减的两种形式"></a>lodash源码分析之自减的两种形式</h1><blockquote>
+<p>这个世界需要一个特定的恶人，可以供人们指名道姓，千夫所指：“全都怪你”。</p>
+<p>——村上春树《当我谈跑步时我谈些什么》</p>
+</blockquote>
+<p>本文为读 lodash 源码的第六篇，后续文章会更新到这个仓库中，欢迎 star：<a href="https://github.com/yeyuqiudeng/pocket-lodash">pocket-lodash</a></p>
+<p>gitbook也会同步仓库的更新，gitbook地址：<a href="https://www.gitbook.com/book/yeyuqiudeng/pocket-lodash/details">pocket-lodash</a></p>
+<p>本篇分析的是 <code>assocIndexOf</code> 函数。</p>
+<h2 id="作用与用法"><a href="#作用与用法" class="headerlink" title="作用与用法"></a>作用与用法</h2><p><code>assocIndexOf</code> 是 lodash 的内部函数，之前在《<a href="hash.md">lodash源码分析之Hash缓存</a>》介绍过一种这样的数据结构：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> caches = [[<span class="string">&#x27;test1&#x27;</span>, <span class="number">1</span>],[<span class="string">&#x27;test2&#x27;</span>,<span class="number">2</span>],[<span class="string">&#x27;test3&#x27;</span>,<span class="number">3</span>]]</span><br></pre></td></tr></table></figure>
 
-<h3 id="then"><a href="#then" class="headerlink" title="then"></a>then</h3><p>then中可以传递两个参数–请求成功（resolved）的函数和请求失败（reject）的函数</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//做一些异步操作</span></span><br><span class="line">  <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">var</span> num = <span class="title class_">Math</span>.<span class="title function_">ceil</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>()*<span class="number">10</span>); <span class="comment">//生成1-10的随机数</span></span><br><span class="line">        <span class="keyword">if</span>(num&lt;=<span class="number">5</span>)&#123;</span><br><span class="line">            <span class="title function_">resolve</span>(num);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="title function_">reject</span>(<span class="string">&#x27;数字太大了&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;, <span class="number">2000</span>);</span><br><span class="line">&#125;);</span><br><span class="line">p.<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;resolved&#x27;</span>,data); <span class="comment">// resolved 5</span></span><br><span class="line">    &#125;,<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rejected&#x27;</span>,err); <span class="comment">// rejected 数字太大了</span></span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>这是一个二维数组，每项中的第一项作为缓存对象的 <code>key</code>，第二项为缓存的值。</p>
+<p><code>assocIndexOf</code> 的作用是找出指定的 <code>key</code> 在数组中的索引值。</p>
+<p>例如要找 <code>key</code> 为 <code>tes1</code> 的索引 ：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test1&#x27;</span>) <span class="comment">// 0</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="catch的用法"><a href="#catch的用法" class="headerlink" title="catch的用法"></a>catch的用法</h3><p>其实它和then的第二个参数一样，用来指定reject的回调。用法是这样：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">p.<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;resolved&#x27;</span>,data);</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rejected&#x27;</span>,err);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 效果和写在then第二个参数里面一样</span></span><br><span class="line"><span class="keyword">catch</span>会把then中的报错展示出来，例如:</span><br><span class="line">p.<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;resolved&#x27;</span>,data);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(somedata); <span class="comment">//此处的somedata未定义</span></span><br><span class="line">&#125;)</span><br><span class="line">.<span class="title function_">catch</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rejected&#x27;</span>,err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>控制台输出 ： rejected ReferenceError：somedata is not defined at p.then<br>与try/catch有相同的功能</p>
-<h3 id="Promise-all"><a href="#Promise-all" class="headerlink" title="Promise.all"></a>Promise.all</h3><p>all 方法提供了并行执行异步操作的能力，并且在所有异步操作执行完后才执行回调，即all中promise 的 resolve 或者 reject执行完了再执行then<br>例：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title class_">Promise1</span> = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span>(<span class="params">resolve, reject</span>)&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">        <span class="title function_">resolve</span>(<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>))</span><br><span class="line">    &#125;,<span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Promise2</span> = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span>(<span class="params">resolve, reject</span>)&#123;<span class="title function_">resolve</span>(<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>))&#125;)</span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Promise3</span> = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span>(<span class="params">resolve, reject</span>)&#123;<span class="title function_">resolve</span>(<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">3</span>))&#125;)</span><br><span class="line"><span class="keyword">let</span> p = <span class="title class_">Promise</span>.<span class="title function_">all</span>([<span class="title class_">Promise1</span>, <span class="title class_">Promise2</span>, <span class="title class_">Promise3</span>])</span><br><span class="line">p.<span class="title function_">then</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="comment">// 三个都成功则成功</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;aaaaaa&#x27;</span>)  <span class="comment">// 如果promise123 不通过resolve输出，这段话不执行</span></span><br><span class="line">&#125;, <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="comment">// 只要有失败，则失败 </span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>all的作用：<br>有了all，你就可以并行执行多个异步操作，并且在一个回调中处理所有的返回数据，是不是很酷？有一个场景是很适合用这个的，一些游戏类的素材比较多的应用，打开网页时，预先加载需要用到的各种资源如图片、flash以及各种静态文件。所有的都加载完后，我们再进行页面的初始化。  </p>
-<p>参考： 作者：蔓蔓雒轩  链接：<a href="https://juejin.cn/post/6844903607968481287%E3%80%82">https://juejin.cn/post/6844903607968481287。</a></p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> eq <span class="keyword">from</span> <span class="string">&#x27;../eq.js&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><a href="../eq.md">lodash源码分析之NaN不是NaN</a></p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">assocIndexOf</span>(<span class="params">array, key</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> &#123; length &#125; = array</span><br><span class="line">  <span class="keyword">while</span> (length--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">eq</span>(array[length][<span class="number">0</span>], key)) &#123;</span><br><span class="line">      <span class="keyword">return</span> length</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码很精简，让 <code>length</code> 自减，调用 <code>eq</code> 函数，从二维数组的最后一项开始，逐项获取 <code>key</code> 值，与传入的 <code>key</code> 比较，遇到匹配的，马上将该项的索引返回。如果都没找到，返回 <code>-1</code> 。返回结果的规则与 <code>indexOf</code> 一致。</p>
+<h2 id="length–和–length"><a href="#length–和–length" class="headerlink" title="length–和–length"></a>length–和–length</h2><p>我们都知道自减还有另外一种前置的形式，即 <code>--length</code>，那将上面的代码改成 <code>while(--length)</code> 可不可以呢？试一下就知道了。</p>
+<p>改了之后，用 <code>caches</code> 来测试下：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test3&#x27;</span>) <span class="comment">// 2</span></span><br><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test2&#x27;</span>) <span class="comment">// 1</span></span><br><span class="line"><span class="title function_">assocIndexOf</span>(caches, <span class="string">&#x27;test1&#x27;</span>) <span class="comment">// -1</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，改了之后，只影响到了第一项的结果，也就是终止条件有问题，根本没有遍历到第一项，但是后面的结果是正确的，也就说循环体里的 <code>length</code> 没有受到影响。</p>
+<p>你可能会有点疑惑，<code>while</code> 的终止条件比较的不是 <code>length</code> 吗？为什么 <code>length--</code> 正确，而 <code>--length</code> 不正确呢？</p>
+<p>其实 <code>while</code> 的终止条件并不是 <code>length</code> ，而是 <code>length--</code> 表达式所返回的结果。现在来看一下 <code>length--</code> 和 <code>--length</code> 所返回的结果有什么差别。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> length = <span class="number">3</span></span><br><span class="line">length-- <span class="comment">// 3</span></span><br><span class="line">length <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到， <code>length--</code> 返回的结果和自减前的一致，但是 <code>length</code> 已经减少 <code>1</code> 了。因此使用 <code>length--</code> ，最后一次进入循环体应该在 <code>length</code> 等于 <code>1</code> 的时候。</p>
+<p>再来看 <code>--length</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> length = <span class="number">3</span></span><br><span class="line">--length <span class="comment">// 2</span></span><br><span class="line">length <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+
+<p><code>--length</code> 返回的结果跟自减后的结果一致，因此最后一次进入循环体应该是 <code>length</code> 为 <code>2</code> 的时候，因此如果换成这种形式，会漏掉一次循环。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://justjavac.com/codepuzzle/2012/10/28/codepuzzle-expression-and-statement.html">代码之谜（二）- 语句与表达式</a></li>
+</ol>
+<h2 id="License"><a href="#License" class="headerlink" title="License"></a>License</h2><p><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">署名-非商业性使用-禁止演绎 4.0 国际 (CC BY-NC-ND 4.0)</a></p>
+<p>最后，所有文章都会同步发送到微信公众号上，欢迎关注，欢迎提意见：  <img src="https://raw.githubusercontent.com/yeyuqiudeng/resource/master/images/qrcode_front-end-article.jpg"> </p>
+<p>作者：对角另一面</p>
 ]]></content>
       <categories>
         <category>前端</category>
       </categories>
       <tags>
         <tag>javascript</tag>
-        <tag>promise</tag>
+        <tag>lodash</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>(转载) lodash源码 内部 baseFindIndex</title>
+    <url>/2022/01/20/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20baseFindIndex/</url>
+    <content><![CDATA[<h1 id="lodash源码分析之baseFindIndex中的运算符优先级"><a href="#lodash源码分析之baseFindIndex中的运算符优先级" class="headerlink" title="lodash源码分析之baseFindIndex中的运算符优先级"></a>lodash源码分析之baseFindIndex中的运算符优先级</h1><blockquote>
+<p>我悟出权力本来就是不讲理的——蟑螂就是海米；也悟出要造反，内心必须强大到足以承受任何后果才行。</p>
+<p>——北岛《城门开》</p>
+</blockquote>
+<p>本文为读 lodash 源码的第十篇，后续文章会更新到这个仓库中，欢迎 star：<a href="https://github.com/yeyuqiudeng/pocket-lodash">pocket-lodash</a></p>
+<p>gitbook也会同步仓库的更新，gitbook地址：<a href="https://www.gitbook.com/book/yeyuqiudeng/pocket-lodash/details">pocket-lodash</a></p>
+<h2 id="作用与用法"><a href="#作用与用法" class="headerlink" title="作用与用法"></a>作用与用法</h2><p><code>baseFindIndex</code> 是内部方法，其作用类似于ES6的 <code>findIndex</code>，查找符合条件的第一个元素的索引。</p>
+<p><code>baseFindIndex</code> 除了从前向后查找外，还可以从后向前查找。</p>
+<p>用法如下：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title function_">baseFindIndex</span>([<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>], <span class="keyword">function</span>(<span class="params">val, index, array</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> val &gt; <span class="number">1</span></span><br><span class="line">&#125;, <span class="number">1</span>) <span class="comment">// 从前向后查找，从索引1开始查找，返回2</span></span><br><span class="line"><span class="title function_">baseFindIndex</span>([<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>], <span class="keyword">function</span>(<span class="params">val, index, array</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> val &gt; <span class="number">1</span></span><br><span class="line">&#125;, <span class="number">1</span>, <span class="literal">true</span>) <span class="comment">// 从后向前查找，从索引1开始查找，返回3</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">baseFindIndex</span>(<span class="params">array, predicate, fromIndex, fromRight</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; length &#125; = array</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex + (fromRight ? <span class="number">1</span> : -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> ((fromRight ? index-- : ++index &lt; length)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">predicate</span>(array[index], index, array)) &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码再次展示了 lodash 的特点，短小精悍！</p>
+<p>这次读源码我们从里往外看。</p>
+<p>从代码中很容易看到，<code>predicate</code> 是传递进来的函数，在 <code>baseFindIndex</code> 调用该函数，如果返回的结果为真值，则中止查找，返回索引。</p>
+<h3 id="运算符优先级"><a href="#运算符优先级" class="headerlink" title="运算符优先级"></a>运算符优先级</h3><p>我们再往外看，看看 <code>while</code> 的循环条件：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">fromRight ? index-- : ++index &lt; length</span><br></pre></td></tr></table></figure>
+
+<p>现在问题来了，这个三元表达式有两种可能，一种是：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">(fromRight ? index-- : ++index) &lt; length</span><br></pre></td></tr></table></figure>
+
+<p>一种是：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">fromRight ? index-- : (++index &lt; length)</span><br></pre></td></tr></table></figure>
+
+<p>究竟是那一种呢？这就要看运算符的优化级了，下面这个表是 MDN 上的截图：</p>
+<p><img src="../images/baseFindIndex.png"></p>
+<p>这个表将优化级划分成了20个级别，数字越大，优化级越高。</p>
+<p>从表中可以看到，比较运算符的优先级为11，而三元表达式（条件运算符）的优化级为4，因此可以确定比较运算符的优先级要比三元表达式的要高，循环条件其实等价于第二种写法。</p>
+<h3 id="增减迷局"><a href="#增减迷局" class="headerlink" title="增减迷局"></a>增减迷局</h3><p>再往上看，可以看到这句代码：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> index = fromIndex + (fromRight ? <span class="number">1</span> : -<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>在向后查找时， <code>index</code> 减少了1，而向前查找时，<code>index</code> 增加了1，为什么要这样做呢？</p>
+<p>再结合循环条件看下：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">fromRight ? index-- : ++index &lt; length</span><br></pre></td></tr></table></figure>
+
+<p>在向前查找时，使用的是 <code>index--</code> 表达式的运算结果，向后查找时，使用的是 <code>++index &lt; lenth</code> 表达式的运算结果。</p>
+<p>从上表中也可以看出前缀自增比比较运算符的优化级要高。</p>
+<p>前缀自增返回的是自增后的结果，而在循环条件中就要将索引 <code>index</code> 增加1，这样会忽略掉第一个需要遍历的元素，作为补救，在开始遍历前，需要将 <code>index</code> 减少1。</p>
+<p>同理，在向前查找时，需要将索引增加1，因为在遍历开始时就已经将索引减少1。</p>
+<p>那又为什么向前查找时用的是后缀自减，而不是用前缀自减呢？</p>
+<p>因为在向前查找时，最终要查找到数组索引 <code>0</code> 的位置，后缀自减返回的是自减前的数值，因此当 <code>index</code> 为 <code>1</code> 时，自减后的 <code>index</code> 为 <code>0</code> ，但是在循环条件中依然拿 <code>1</code> 来进行判断，所以使得索引 <code>0</code> 得以进入循环体。</p>
+<p>关于前缀自增/减和后缀自增/减的区别可以看《<a href="./assocIndexOf.md">lodash源码分析之自减的两种形式</a>》。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence">MDN:运算符优先级</a></li>
+</ol>
+<h2 id="License"><a href="#License" class="headerlink" title="License"></a>License</h2><p><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">署名-非商业性使用-禁止演绎 4.0 国际 (CC BY-NC-ND 4.0)</a></p>
+<p>最后，所有文章都会同步发送到微信公众号上，欢迎关注,欢迎提意见：  <img src="https://raw.githubusercontent.com/yeyuqiudeng/resource/master/images/qrcode_front-end-article.jpg"> </p>
+<p>作者：对角另一面</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
+        <tag>lodash</tag>
       </tags>
   </entry>
   <entry>
@@ -867,23 +875,41 @@
       </tags>
   </entry>
   <entry>
-    <title>yarn和npm命令对比</title>
-    <url>/2022/01/25/yarn%E5%92%8Cnpm%E5%91%BD%E4%BB%A4%E5%AF%B9%E6%AF%94/</url>
-    <content><![CDATA[<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">npm                                     yarn</span><br><span class="line"></span><br><span class="line">npm init                                yarn init              <span class="comment">// 初始化</span></span><br><span class="line">npm i | install                         yarn  (install)        <span class="comment">// 安装依赖包</span></span><br><span class="line">npm i x --S | --save                    yarn add  x            <span class="comment">// 安装生产依赖并保存包名</span></span><br><span class="line">npm i x --D | --save-dev                yarn add x -D          <span class="comment">// 安装开发依赖并保存包名</span></span><br><span class="line">npm un | uninstall  x                   yarn remove            <span class="comment">// 删除依赖包</span></span><br><span class="line">npm i -g | npm -g i x                   yarn <span class="variable language_">global</span> add x      <span class="comment">// 全局安装</span></span><br><span class="line">npm un -g x                             yarn <span class="variable language_">global</span> remove x   <span class="comment">// 全局下载</span></span><br><span class="line">npm run dev                             yarn dev | run dev     <span class="comment">// 运行命令</span></span><br></pre></td></tr></table></figure>]]></content>
-  </entry>
-  <entry>
-    <title>事件循环Eventloop</title>
-    <url>/2021/09/07/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AFEventLoop/</url>
-    <content><![CDATA[<h3 id="1-javascript是单线程语言"><a href="#1-javascript是单线程语言" class="headerlink" title="1. javascript是单线程语言"></a>1. javascript是单线程语言</h3><h3 id="2-所有的线程，都是有同步队列，和异步队列"><a href="#2-所有的线程，都是有同步队列，和异步队列" class="headerlink" title="2. 所有的线程，都是有同步队列，和异步队列"></a>2. 所有的线程，都是有同步队列，和异步队列</h3><p>立即执行，如函数 是同步；promise，ajax为异步</p>
-<h3 id="3-任务队列-事件循环"><a href="#3-任务队列-事件循环" class="headerlink" title="3. 任务队列-事件循环"></a>3. 任务队列-事件循环</h3><p>同步任务会立刻执行，进入到主线程当中，异步任务会被放到任务队列（Event Queue）当中。<br>等待同步代码执行完毕后，返回来，再将异步中的任务放到主线程中执行,反复这样的循环，这就是事件循环。也就是先执行同步，返回来按照异步的顺序再次执行</p>
-<h3 id="4-宏观任务和微观任务（先执行微观任务，再执行宏观任务）"><a href="#4-宏观任务和微观任务（先执行微观任务，再执行宏观任务）" class="headerlink" title="4. 宏观任务和微观任务（先执行微观任务，再执行宏观任务）"></a>4. 宏观任务和微观任务（先执行微观任务，再执行宏观任务）</h3><p>宏观任务主要包含：setTimeout、setInterval、script(整体代码)、I/O、UI 交互事件、setImmediate(Node.js 环境)<br>微观任务主要包括：Promise、MutaionObserver、process.nextTick(Node.js 环境)</p>
+    <title>promise</title>
+    <url>/2021/12/03/promise/</url>
+    <content><![CDATA[<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>Promise 是异步编程的一种解决方案： 从语法上讲，promise是一个对象，从它可以获取异步操作的消息；从本意上讲，它是承诺，承诺它过一段时间会给你一个结果。</p>
+<h3 id="promise-有哪三种状态："><a href="#promise-有哪三种状态：" class="headerlink" title="promise 有哪三种状态："></a>promise 有哪三种状态：</h3><p>pending(等待态)、fulfiled(成功态)、rejected(失败态)</p>
+<h3 id="promise-使用来解决什么问题的？"><a href="#promise-使用来解决什么问题的？" class="headerlink" title="promise 使用来解决什么问题的？"></a>promise 使用来解决什么问题的？</h3><p>回调地狱，代码难以维护， 常常第一个的函数的输出是第二个函数的输入这种现象<br>promise可以支持多个并发的请求，获取并发请求中的数据<br>这个promise可以解决异步的问题，本身不能说promise是异步的</p>
+<h3 id="promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。"><a href="#promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。" class="headerlink" title="promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。"></a>promise是一个构造函数，自己身上有all、reject、resolve这几个眼熟的方法，原型上有then、catch等同样很眼熟的方法。</h3><p>promise的构造函数接收一个参数：函数，并且这个函数需要传入两个参数：  </p>
+<ul>
+<li>resolve ：异步操作执行成功后的回调函数</li>
+<li>reject：异步操作执行失败后的回调函数  </li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//做一些异步操作</span></span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;执行完成&#x27;</span>);</span><br><span class="line">        <span class="title function_">resolve</span>(<span class="string">&#x27;我是成功！！&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="then"><a href="#then" class="headerlink" title="then"></a>then</h3><p>then中可以传递两个参数–请求成功（resolved）的函数和请求失败（reject）的函数</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//做一些异步操作</span></span><br><span class="line">  <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">var</span> num = <span class="title class_">Math</span>.<span class="title function_">ceil</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>()*<span class="number">10</span>); <span class="comment">//生成1-10的随机数</span></span><br><span class="line">        <span class="keyword">if</span>(num&lt;=<span class="number">5</span>)&#123;</span><br><span class="line">            <span class="title function_">resolve</span>(num);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="title function_">reject</span>(<span class="string">&#x27;数字太大了&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;, <span class="number">2000</span>);</span><br><span class="line">&#125;);</span><br><span class="line">p.<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;resolved&#x27;</span>,data); <span class="comment">// resolved 5</span></span><br><span class="line">    &#125;,<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rejected&#x27;</span>,err); <span class="comment">// rejected 数字太大了</span></span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="catch的用法"><a href="#catch的用法" class="headerlink" title="catch的用法"></a>catch的用法</h3><p>其实它和then的第二个参数一样，用来指定reject的回调。用法是这样：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">p.<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;resolved&#x27;</span>,data);</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rejected&#x27;</span>,err);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 效果和写在then第二个参数里面一样</span></span><br><span class="line"><span class="keyword">catch</span>会把then中的报错展示出来，例如:</span><br><span class="line">p.<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;resolved&#x27;</span>,data);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(somedata); <span class="comment">//此处的somedata未定义</span></span><br><span class="line">&#125;)</span><br><span class="line">.<span class="title function_">catch</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rejected&#x27;</span>,err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>控制台输出 ： rejected ReferenceError：somedata is not defined at p.then<br>与try/catch有相同的功能</p>
+<h3 id="Promise-all"><a href="#Promise-all" class="headerlink" title="Promise.all"></a>Promise.all</h3><p>all 方法提供了并行执行异步操作的能力，并且在所有异步操作执行完后才执行回调，即all中promise 的 resolve 或者 reject执行完了再执行then<br>例：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title class_">Promise1</span> = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span>(<span class="params">resolve, reject</span>)&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">        <span class="title function_">resolve</span>(<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>))</span><br><span class="line">    &#125;,<span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Promise2</span> = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span>(<span class="params">resolve, reject</span>)&#123;<span class="title function_">resolve</span>(<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>))&#125;)</span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Promise3</span> = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span>(<span class="params">resolve, reject</span>)&#123;<span class="title function_">resolve</span>(<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">3</span>))&#125;)</span><br><span class="line"><span class="keyword">let</span> p = <span class="title class_">Promise</span>.<span class="title function_">all</span>([<span class="title class_">Promise1</span>, <span class="title class_">Promise2</span>, <span class="title class_">Promise3</span>])</span><br><span class="line">p.<span class="title function_">then</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="comment">// 三个都成功则成功</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;aaaaaa&#x27;</span>)  <span class="comment">// 如果promise123 不通过resolve输出，这段话不执行</span></span><br><span class="line">&#125;, <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="comment">// 只要有失败，则失败 </span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>all的作用：<br>有了all，你就可以并行执行多个异步操作，并且在一个回调中处理所有的返回数据，是不是很酷？有一个场景是很适合用这个的，一些游戏类的素材比较多的应用，打开网页时，预先加载需要用到的各种资源如图片、flash以及各种静态文件。所有的都加载完后，我们再进行页面的初始化。  </p>
+<p>参考： 作者：蔓蔓雒轩  链接：<a href="https://juejin.cn/post/6844903607968481287%E3%80%82">https://juejin.cn/post/6844903607968481287。</a></p>
 ]]></content>
       <categories>
         <category>前端</category>
       </categories>
       <tags>
         <tag>javascript</tag>
+        <tag>promise</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>yarn和npm命令对比</title>
+    <url>/2022/01/25/yarn%E5%92%8Cnpm%E5%91%BD%E4%BB%A4%E5%AF%B9%E6%AF%94/</url>
+    <content><![CDATA[<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">npm                                     yarn</span><br><span class="line"></span><br><span class="line">npm init                                yarn init              <span class="comment">// 初始化</span></span><br><span class="line">npm i | install                         yarn  (install)        <span class="comment">// 安装依赖包</span></span><br><span class="line">npm i x --S | --save                    yarn add  x            <span class="comment">// 安装生产依赖并保存包名</span></span><br><span class="line">npm i x --D | --save-dev                yarn add x -D          <span class="comment">// 安装开发依赖并保存包名</span></span><br><span class="line">npm un | uninstall  x                   yarn remove            <span class="comment">// 删除依赖包</span></span><br><span class="line">npm i -g | npm -g i x                   yarn <span class="variable language_">global</span> add x      <span class="comment">// 全局安装</span></span><br><span class="line">npm un -g x                             yarn <span class="variable language_">global</span> remove x   <span class="comment">// 全局下载</span></span><br><span class="line">npm run dev                             yarn dev | run dev     <span class="comment">// 运行命令</span></span><br></pre></td></tr></table></figure>]]></content>
   </entry>
   <entry>
     <title>地址</title>
@@ -898,6 +924,20 @@
       </categories>
       <tags>
         <tag>网站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>事件循环Eventloop</title>
+    <url>/2021/09/07/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AFEventLoop/</url>
+    <content><![CDATA[<h3 id="1-javascript是单线程语言"><a href="#1-javascript是单线程语言" class="headerlink" title="1. javascript是单线程语言"></a>1. javascript是单线程语言</h3><h3 id="2-所有的线程，都是有同步队列，和异步队列"><a href="#2-所有的线程，都是有同步队列，和异步队列" class="headerlink" title="2. 所有的线程，都是有同步队列，和异步队列"></a>2. 所有的线程，都是有同步队列，和异步队列</h3><p>立即执行，如函数 是同步；promise，ajax为异步</p>
+<h3 id="3-任务队列-事件循环"><a href="#3-任务队列-事件循环" class="headerlink" title="3. 任务队列-事件循环"></a>3. 任务队列-事件循环</h3><p>同步任务会立刻执行，进入到主线程当中，异步任务会被放到任务队列（Event Queue）当中。<br>等待同步代码执行完毕后，返回来，再将异步中的任务放到主线程中执行,反复这样的循环，这就是事件循环。也就是先执行同步，返回来按照异步的顺序再次执行</p>
+<h3 id="4-宏观任务和微观任务（先执行微观任务，再执行宏观任务）"><a href="#4-宏观任务和微观任务（先执行微观任务，再执行宏观任务）" class="headerlink" title="4. 宏观任务和微观任务（先执行微观任务，再执行宏观任务）"></a>4. 宏观任务和微观任务（先执行微观任务，再执行宏观任务）</h3><p>宏观任务主要包含：setTimeout、setInterval、script(整体代码)、I/O、UI 交互事件、setImmediate(Node.js 环境)<br>微观任务主要包括：Promise、MutaionObserver、process.nextTick(Node.js 环境)</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
       </tags>
   </entry>
   <entry>
