@@ -704,7 +704,7 @@
 
 
 
-<h3 id="解析器-Compile"><a href="#解析器-Compile" class="headerlink" title="解析器 Compile"></a>解析器 <code>Compile</code></h3><p>![vue2 模板渲染过程](/images/vue2 模板渲染过程.jpg)</p>
+<h3 id="解析器-Compile"><a href="#解析器-Compile" class="headerlink" title="解析器 Compile"></a>解析器 <code>Compile</code></h3><p><img src="/images/vue2%E6%A8%A1%E6%9D%BF%E6%B8%B2%E6%9F%93%E8%BF%87%E7%A8%8B.jpg" alt="vue2 模板渲染过程"></p>
 <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者：沐华<br>链接：<a href="https://juejin.cn/post/7010594233253888013">https://juejin.cn/post/7010594233253888013</a></p>
 <p>作者：小肥羊丶<br>链接：<a href="https://juejin.cn/post/6844904147997687821">https://juejin.cn/post/6844904147997687821</a></p>
 <p>作者：zeroone001<br>链接：<a href="https://juejin.cn/post/7013227096096899085">https://juejin.cn/post/7013227096096899085</a></p>
