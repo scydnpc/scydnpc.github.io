@@ -1,0 +1,229 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Javascript 什么是执行上下文 | 一 个 懒 人 的 博 客</title><meta name="keywords" content="javascript,面试"><meta name="author" content="SCYDNPC"><meta name="copyright" content="SCYDNPC"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是执行上下文当 JS 引擎解析到可执行代码片段（通常是函数调用阶段）的时候，就会先做一些执行前的准备工作，这个 “准备工作”，就叫做 “执行上下文(execution context 简称 EC)” 或者也可以叫做执行环境。 执行上下文 为我们的可执行代码块提供了执行前的必要准备工作，例如变量对象的定义、作用域链的扩展、提供调用者的对象引用等信息。 执行上下文类型在 ES3 中规定了   全局">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript 什么是执行上下文">
+<meta property="og:url" content="http://example.com/2022/02/16/Javascript-%E4%BB%80%E4%B9%88%E6%98%AF%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/index.html">
+<meta property="og:site_name" content="一 个 懒 人 的 博 客">
+<meta property="og:description" content="什么是执行上下文当 JS 引擎解析到可执行代码片段（通常是函数调用阶段）的时候，就会先做一些执行前的准备工作，这个 “准备工作”，就叫做 “执行上下文(execution context 简称 EC)” 或者也可以叫做执行环境。 执行上下文 为我们的可执行代码块提供了执行前的必要准备工作，例如变量对象的定义、作用域链的扩展、提供调用者的对象引用等信息。 执行上下文类型在 ES3 中规定了   全局">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/home.JPG">
+<meta property="article:published_time" content="2022-02-16T10:03:30.000Z">
+<meta property="article:modified_time" content="2022-02-17T02:16:46.420Z">
+<meta property="article:author" content="SCYDNPC">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/home.JPG"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/02/16/Javascript-%E4%BB%80%E4%B9%88%E6%98%AF%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Javascript 什么是执行上下文',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-02-17 10:16:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/images/home.JPG')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">一 个 懒 人 的 博 客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Javascript 什么是执行上下文</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-02-16T10:03:30.000Z" title="发表于 2022-02-16 18:03:30">2022-02-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-02-17T02:16:46.420Z" title="更新于 2022-02-17 10:16:46">2022-02-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Javascript 什么是执行上下文"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="什么是执行上下文"><a href="#什么是执行上下文" class="headerlink" title="什么是执行上下文"></a>什么是执行上下文</h3><p>当 <code>JS</code> 引擎解析到可执行代码片段（通常是函数调用阶段）的时候，就会先做一些执行前的准备工作，这个 <strong>“准备工作”</strong>，就叫做 <strong>“执行上下文(execution context 简称 <code>EC</code>)”</strong> 或者也可以叫做<strong>执行环境</strong>。</p>
+<p><strong>执行上下文</strong> 为我们的可执行代码块提供了执行前的必要准备工作，例如变量对象的定义、作用域链的扩展、提供调用者的对象引用等信息。</p>
+<h3 id="执行上下文类型"><a href="#执行上下文类型" class="headerlink" title="执行上下文类型"></a>执行上下文类型</h3><p>在 <code>ES3</code> 中规定了 </p>
+<ol>
+<li><strong>全局执行上下文</strong>：默认执行上下文，一开始就会被压到执行栈最底部</li>
+<li><strong>函数执行上下文</strong>：函数被调用时创建（不管这个函数是不是被重复调用的）</li>
+<li><strong>Eval 函数执行上下文</strong>：执行在 <code>eval</code> 函数内部的代码也会有它属于自己的执行上下文，但由于并不经常使用 <code>eval</code>，所以在这里不做分析。</li>
+</ol>
+<h3 id="ES3-执行上下文的内容"><a href="#ES3-执行上下文的内容" class="headerlink" title="ES3 执行上下文的内容"></a>ES3 执行上下文的内容</h3><h4 id="变量对象-variable-object-简称-VO"><a href="#变量对象-variable-object-简称-VO" class="headerlink" title="变量对象(variable object 简称 VO)"></a>变量对象(<code>variable object</code> 简称 <code>VO</code>)</h4><p>简单说就是建立一个对象VO，内部的参数为三种：</p>
+<p><img src="/images/%E5%8F%98%E9%87%8F%E5%AF%B9%E8%B1%A1.png" alt="变量对象"></p>
+<ul>
+<li><p>全局上下文的变量对象就是全局对象，对于浏览器来说就是<code>window</code>对象</p>
+</li>
+<li><p>函数执行上下文的变量对象(VO)，只有在函数被调用时，VO 被激活成<strong>活动对象</strong>(AO)，才能访问到其中额属性和方法</p>
+</li>
+</ul>
+<p><strong>有一点需要注意，只有函数声明（function declaration）会被加入到变量对象中，而函数表达式（function expression）会被忽略。</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数声明</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line"><span class="comment">// 函数表达式</span></span><br><span class="line"><span class="comment">// b是变量声明，会被加入变量对象，但是后面的function不会被加入变量对象</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="keyword">function</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自执行函数/立即调用函数表达式（Immediately Invoked Function Expression 简写 IIFE） -- 闭包</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">p</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(a)</span><br><span class="line">&#125;)()</span><br><span class="line"><span class="comment">// 输出 1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="活动对象（-activation-object-简称-AO）"><a href="#活动对象（-activation-object-简称-AO）" class="headerlink" title="活动对象（ activation object 简称 AO）"></a>活动对象（ <code>activation object</code> 简称 <code>AO</code>）</h4><p>函数进入执行阶段时，原本不能访问的变量对象被激活成为一个活动对象，自此，我们可以访问到其中的各种属性。</p>
+<blockquote>
+<p>其实变量对象和活动对象是一个东西，只不过处于不同的状态和阶段而已。</p>
+</blockquote>
+<h4 id="作用域链"><a href="#作用域链" class="headerlink" title="作用域链"></a>作用域链</h4><p><strong>作用域</strong>规定了如何查找变量，也就是确定当前执行代码对变量的访问权限。变量的查找顺序为：</p>
+<p><img src="/images/%E6%9F%A5%E6%89%BE%E5%8F%98%E9%87%8F.png" alt="查找变量顺序"></p>
+<p>这样由多个执行上下文的变量对象构成的链表就是 <strong>作用域链</strong></p>
+<p><strong>函数的作用域在函数创建时就已经确定了</strong>，<strong>函数创建时</strong>，内部通过名为 <code>[[scope]]</code> 的内部属性保存所有父变量对象到其中；<strong>函数执行时</strong>，会创建一个执行环境，然后通过复制函数的 <code>[[scope]]</code> 属性中的对象构建起执行环境的作用域链，然后，变量对象 <code>VO</code> 被激活生成 <code>AO</code> 并添加到作用域链的前端，完整作用域链创建完成：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Scope</span> = [<span class="variable constant_">AO</span>].<span class="title function_">concat</span>([[<span class="title class_">Scope</span>]]);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="调用者信息（当前可执行代码块的调用者，this）"><a href="#调用者信息（当前可执行代码块的调用者，this）" class="headerlink" title="调用者信息（当前可执行代码块的调用者，this）"></a>调用者信息（当前可执行代码块的调用者，this）</h4><p>如果当前函数被作为对象方法调用或使用 <code>bind</code> <code>call</code> <code>apply</code> 等 <code>API</code> 进行委托调用，则将当前代码块的调用者信息（<code>this value</code>）存入当前执行上下文，否则默认为全局对象调用。</p>
+<h4 id="执行上下文数据结构模拟"><a href="#执行上下文数据结构模拟" class="headerlink" title="执行上下文数据结构模拟"></a>执行上下文数据结构模拟</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">executionContext：&#123;</span><br><span class="line">  [variable object | activation object]：&#123;</span><br><span class="line">    <span class="variable language_">arguments</span>,</span><br><span class="line">    <span class="attr">variables</span>: [...],</span><br><span class="line">    <span class="attr">funcions</span>: [...]</span><br><span class="line">  &#125;,</span><br><span class="line">  scope <span class="attr">chain</span>: variable object + all parents scopes</span><br><span class="line">  <span class="attr">thisValue</span>: context object</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ES3执行上下文的声明周期"><a href="#ES3执行上下文的声明周期" class="headerlink" title="ES3执行上下文的声明周期"></a>ES3执行上下文的声明周期</h3><h4 id="创建阶段"><a href="#创建阶段" class="headerlink" title="创建阶段"></a>创建阶段</h4><p><strong>函数调用时但未执行函数体内的代码的这段时间</strong></p>
+<p>创建阶段就是对上述的变量对象、作用域链、调用者this进行创建</p>
+<h4 id="执行阶段"><a href="#执行阶段" class="headerlink" title="执行阶段"></a>执行阶段</h4><p>这个阶段js代码逐条执行，对创建阶段创建的这些变量进行赋值和顺着作用域链访问。</p>
+<p>需要注意的是，该阶段会把执行上下文压入执行栈，该执行上下文有内部函数调用时，又会创建新的执行上下文，交出控制权。</p>
+<h4 id="销毁阶段"><a href="#销毁阶段" class="headerlink" title="销毁阶段"></a>销毁阶段</h4><p>函数执行完，当前执行上下文弹出执行栈并销毁，控制权交给执行栈上一层的执行上下文</p>
+<blockquote>
+<p>闭包情况不同</p>
+</blockquote>
+<h3 id="ES5的执行上下文"><a href="#ES5的执行上下文" class="headerlink" title="ES5的执行上下文"></a>ES5的执行上下文</h3><p>去除了 变量对象 和 活动对象的概念，以<strong>词法环境组件</strong> <strong>（</strong> <strong><code>LexicalEnvironment component</code>）</strong> 和 <strong>变量环境组件****（</strong> <strong><code>VariableEnvironment component</code>）</strong>替代。</p>
+<p>数据结构模拟如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">ExecutionContext</span> = &#123;</span><br><span class="line">  <span class="title class_">ThisBinding</span> = <span class="language-xml"><span class="tag">&lt;<span class="name">this</span> <span class="attr">value</span>&gt;</span>,</span></span><br><span class="line"><span class="language-xml">  // 词法环境</span></span><br><span class="line"><span class="language-xml">  LexicalEnvironment = &#123; ... &#125;,</span></span><br><span class="line"><span class="language-xml">  // 变量环境</span></span><br><span class="line"><span class="language-xml">  VariableEnvironment = &#123; ... &#125;,</span></span><br><span class="line"><span class="language-xml">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="词法环境"><a href="#词法环境" class="headerlink" title="词法环境"></a>词法环境</h4><p><strong>环境记录器</strong>：存储变量和函数声明的实际位置。</p>
+<p><strong>外部环境的引用</strong>：意味着它可以访问其父级词法环境（作用域）。</p>
+<p>数据结构模拟如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">LexicalEnvironment</span> = &#123;</span><br><span class="line">  <span class="comment">//环境记录器 </span></span><br><span class="line">  <span class="title class_">EnvironmentRecord</span>:&#123;&#125;,</span><br><span class="line">  <span class="comment">// 外部环境的引用</span></span><br><span class="line">  <span class="attr">outer</span>: &lt;<span class="literal">null</span>&gt; | 父级词法环境</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>词法环境分</li>
+</ul>
+<p>​        <strong>全局环境</strong>（全局上下文中的词法环境）；</p>
+<p>​        <strong>函数环境</strong>（函数上下文的词法环境）</p>
+<ul>
+<li>环境记录器分</li>
+</ul>
+<p>​        <strong>声明式环境记录器</strong>存储变量、函数和参数；</p>
+<p>​        <strong>对象环境记录器</strong>用来定行下文义出现在<strong>全局上下文</strong>中的变量和函数的关系。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 全局环境</span></span><br><span class="line"><span class="title class_">GlobalExectionContext</span> = &#123;</span><br><span class="line">  <span class="title class_">LexicalEnvironment</span>: &#123;</span><br><span class="line">    <span class="title class_">EnvironmentRecord</span>: &#123;</span><br><span class="line">      <span class="title class_">Type</span>: <span class="string">&quot;Object&quot;</span>,</span><br><span class="line">      <span class="comment">// 在这里绑定标识符</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 全局环境没有外部环境引用，所以为null</span></span><br><span class="line">    <span class="attr">outer</span>: &lt;<span class="literal">null</span>&gt; </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 函数环境</span></span><br><span class="line"><span class="title class_">FunctionExectionContext</span> = &#123;</span><br><span class="line">  <span class="title class_">LexicalEnvironment</span>: &#123;</span><br><span class="line">    <span class="comment">// 声明式环境记录器</span></span><br><span class="line">    <span class="title class_">EnvironmentRecord</span>: &#123;</span><br><span class="line">      <span class="title class_">Type</span>: <span class="string">&quot;Declarative&quot;</span>,</span><br><span class="line">      <span class="comment">// 在这里绑定标识符</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 函数的外部环境引用为父级词法环境或者全局词法环境</span></span><br><span class="line">    <span class="attr">outer</span>: <span class="language-xml"><span class="tag">&lt;<span class="name">Global</span> <span class="attr">or</span> <span class="attr">outer</span> <span class="attr">function</span> <span class="attr">environment</span> <span class="attr">reference</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">  &#125;</span></span><br><span class="line"><span class="language-xml">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>另外，函数环境的声明式环境记录器中包含一个<code>arguments</code> 对象，和函数的传参相关，用来存储索引和参数的映射</p>
+</blockquote>
+<h4 id="变量环境"><a href="#变量环境" class="headerlink" title="变量环境"></a>变量环境</h4><p>变量环境也是一种词法环境。但由于ES6 中定义了const 和 let，所以：</p>
+<p>词法环境主要存储（<code>let</code> 和 <code>const</code>）绑定的函数声明和变量</p>
+<p>变量环境存储 <code>var</code> 绑定的函数声明和变量</p>
+<p>所以根据词法环境和变量环境，结合实际的变量函数的声明，数据结构模拟如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">const</span> b = <span class="number">30</span>;</span><br><span class="line"><span class="keyword">var</span> c;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">multiply</span>(<span class="params">e, f</span>) &#123;</span><br><span class="line"> <span class="keyword">var</span> g = <span class="number">20</span>;</span><br><span class="line"> <span class="keyword">return</span> e * f * g;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">c = <span class="title function_">multiply</span>(<span class="number">20</span>, <span class="number">30</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 全局环境</span></span><br><span class="line"><span class="title class_">GlobalExectionContext</span> = &#123;</span><br><span class="line">  <span class="comment">// 绑定this，全局，浏览器中为window</span></span><br><span class="line">  <span class="title class_">ThisBinding</span>: &lt;Global Object&gt;,</span><br><span class="line">  // 词法环境</span><br><span class="line">  LexicalEnvironment: &#123;</span><br><span class="line">  	// 全局环境中的环境记录器为对象环境记录器</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">      Type: &quot;Object&quot;,</span><br><span class="line">  		// let const定义的变量，表示 未初始化</span><br><span class="line">      a: &lt; uninitialized &gt;,</span><br><span class="line">      b: &lt; uninitialized &gt;,</span><br><span class="line">      multiply: &lt; func &gt;</span><br><span class="line">    &#125;</span><br><span class="line">		// 全局环境中的外部环境引用为 null</span><br><span class="line">    outer: &lt;null&gt;</span><br><span class="line">  &#125;,</span><br><span class="line">	// 变量环境</span><br><span class="line">  VariableEnvironment: &#123;</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">      Type: &quot;Object&quot;,</span><br><span class="line">      // var 定义的变量，因为变量提升，所以是undefined</span><br><span class="line">      c: undefined,</span><br><span class="line">    &#125;</span><br><span class="line">    outer: &lt;null&gt;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 函数环境 -- 函数引用后到函数执行前创建</span><br><span class="line">FunctionExectionContext = &#123;</span><br><span class="line">  ThisBinding: &lt;Global Object&gt;,</span><br><span class="line">  LexicalEnvironment: &#123;</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">  		// 声明式环境记录器</span><br><span class="line">      Type: &quot;Declarative&quot;,</span><br><span class="line">      // 记录函数传参</span><br><span class="line">      Arguments: &#123;0: 20, 1: 30, length: 2&#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    outer: &lt;GlobalLexicalEnvironment&gt;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">	VariableEnvironment: &#123;</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">      Type: &quot;Declarative&quot;,</span><br><span class="line">      g: undefined</span><br><span class="line">    &#125;,</span><br><span class="line">    outer: &lt;GlobalLexicalEnvironment&gt;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行上下文栈"><a href="#执行上下文栈" class="headerlink" title="执行上下文栈"></a>执行上下文栈</h3><p>顾名思义，执行上下文栈是栈结构的，因此遵循 <code>LIFO</code>（后进先出）的特性，代码执行期间创建的所有执行上下文，都会交给执行上下文栈进行管理。</p>
+<p>当 JS 引擎开始解析脚本代码时，会首先创建一个<strong>全局执行上下文</strong>，压入栈底（这个全局执行上下文从创建一直到程序销毁，都会存在于栈的底部）。</p>
+<p>每当引擎发现一处函数调用，就会创建一个新的<strong>函数执行上下文</strong>压入栈内，并将控制权交给该上下文，待函数执行完成后，即将该执行上下文从栈内弹出销毁，将控制权重新给到栈内上一个执行上下文。</p>
+<h3 id="栈溢出经常出现在递归中"><a href="#栈溢出经常出现在递归中" class="headerlink" title="栈溢出经常出现在递归中"></a>栈溢出经常出现在递归中</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者：不写bug的米公子<br>链接：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904158957404167">https://juejin.cn/post/6844904158957404167</a></p>
+<p>作者：子非<br>链接：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903682283143181">https://juejin.cn/post/6844903682283143181</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/javascript/">javascript</a><a class="post-meta__tags" href="/tags/%E9%9D%A2%E8%AF%95/">面试</a></div><div class="post_share"><div class="social-share" data-image="/images/home.JPG" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/02/16/Javascript-%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8C%E9%97%AD%E5%8C%85/"><img class="prev-cover" src="/images/home.JPG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Javascript 作用域和闭包</div></div></a></div><div class="next-post pull-right"><a href="/2022/02/09/vue2-%E6%80%BB%E7%BB%93/"><img class="next-cover" src="/images/home.JPG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">vue2 总结</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/02/16/Javascript-%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8C%E9%97%AD%E5%8C%85/" title="Javascript 作用域和闭包"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-02-16</div><div class="title">Javascript 作用域和闭包</div></div></a></div><div><a href="/2021/12/20/lodash%E6%BA%90%E7%A0%81%20chunk/" title="(转载) lodash源码 chunk"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-20</div><div class="title">(转载) lodash源码 chunk</div></div></a></div><div><a href="/2021/12/06/Js%E9%98%B2%E6%8A%96%E4%B8%8E%E8%8A%82%E6%B5%81/" title="Js防抖与节流"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-06</div><div class="title">Js防抖与节流</div></div></a></div><div><a href="/2021/12/20/lodash%E6%BA%90%E7%A0%81%20compact/" title="(转载) lodash源码 compact"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-20</div><div class="title">(转载) lodash源码 compact</div></div></a></div><div><a href="/2021/12/27/lodash%E6%BA%90%E7%A0%81%20eq/" title="(转载) lodash源码 eq"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-27</div><div class="title">(转载) lodash源码 eq</div></div></a></div><div><a href="/2021/12/29/lodash%E6%BA%90%E7%A0%81%20%E5%86%85%E9%83%A8%20Hash%E7%BC%93%E5%AD%98/" title="(转载) lodash源码 内部 Hash缓存"><img class="cover" src="/images/home.JPG" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-29</div><div class="title">(转载) lodash源码 内部 Hash缓存</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/images/avatar.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">SCYDNPC</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">1.</span> <span class="toc-text">什么是执行上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">执行上下文类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ES3-%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">ES3 执行上下文的内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E5%AF%B9%E8%B1%A1-variable-object-%E7%AE%80%E7%A7%B0-VO"><span class="toc-number">3.1.</span> <span class="toc-text">变量对象(variable object 简称 VO)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B4%BB%E5%8A%A8%E5%AF%B9%E8%B1%A1%EF%BC%88-activation-object-%E7%AE%80%E7%A7%B0-AO%EF%BC%89"><span class="toc-number">3.2.</span> <span class="toc-text">活动对象（ activation object 简称 AO）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE"><span class="toc-number">3.3.</span> <span class="toc-text">作用域链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E8%80%85%E4%BF%A1%E6%81%AF%EF%BC%88%E5%BD%93%E5%89%8D%E5%8F%AF%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%9D%97%E7%9A%84%E8%B0%83%E7%94%A8%E8%80%85%EF%BC%8Cthis%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">调用者信息（当前可执行代码块的调用者，this）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%A8%A1%E6%8B%9F"><span class="toc-number">3.5.</span> <span class="toc-text">执行上下文数据结构模拟</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ES3%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E7%9A%84%E5%A3%B0%E6%98%8E%E5%91%A8%E6%9C%9F"><span class="toc-number">4.</span> <span class="toc-text">ES3执行上下文的声明周期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%98%B6%E6%AE%B5"><span class="toc-number">4.1.</span> <span class="toc-text">创建阶段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E9%98%B6%E6%AE%B5"><span class="toc-number">4.2.</span> <span class="toc-text">执行阶段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%80%E6%AF%81%E9%98%B6%E6%AE%B5"><span class="toc-number">4.3.</span> <span class="toc-text">销毁阶段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ES5%E7%9A%84%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">5.</span> <span class="toc-text">ES5的执行上下文</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%8D%E6%B3%95%E7%8E%AF%E5%A2%83"><span class="toc-number">5.1.</span> <span class="toc-text">词法环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E7%8E%AF%E5%A2%83"><span class="toc-number">5.2.</span> <span class="toc-text">变量环境</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E6%A0%88"><span class="toc-number">6.</span> <span class="toc-text">执行上下文栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%88%E6%BA%A2%E5%87%BA%E7%BB%8F%E5%B8%B8%E5%87%BA%E7%8E%B0%E5%9C%A8%E9%80%92%E5%BD%92%E4%B8%AD"><span class="toc-number">7.</span> <span class="toc-text">栈溢出经常出现在递归中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/02/16/Javascript-%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8C%E9%97%AD%E5%8C%85/" title="Javascript 作用域和闭包">Javascript 作用域和闭包</a><time datetime="2022-02-16T10:04:33.000Z" title="发表于 2022-02-16 18:04:33">2022-02-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/02/16/Javascript-%E4%BB%80%E4%B9%88%E6%98%AF%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/" title="Javascript 什么是执行上下文">Javascript 什么是执行上下文</a><time datetime="2022-02-16T10:03:30.000Z" title="发表于 2022-02-16 18:03:30">2022-02-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/02/09/vue2-%E6%80%BB%E7%BB%93/" title="vue2 总结">vue2 总结</a><time datetime="2022-02-09T07:38:01.000Z" title="发表于 2022-02-09 15:38:01">2022-02-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/02/06/CSS-BFC/" title="CSS BFC">CSS BFC</a><time datetime="2022-02-06T13:49:37.000Z" title="发表于 2022-02-06 21:49:37">2022-02-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/02/06/webpack/" title="webpack">webpack</a><time datetime="2022-02-05T21:50:46.000Z" title="发表于 2022-02-06 05:50:46">2022-02-06</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient( 135deg, #E2B0FF 10%, #9F44D3 100%)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By SCYDNPC</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

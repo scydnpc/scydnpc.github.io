@@ -9,9 +9,10 @@
 <p>简单来说就是，<code>BFC</code>是一个完全独立的空间（布局环境），让空间里的子元素不会影响到外面的布局。那么怎么使用<code>BFC</code>呢，<code>BFC</code>可以看做是一个<code>CSS</code>元素属性</p>
 <h4 id="触发BFC"><a href="#触发BFC" class="headerlink" title="触发BFC"></a>触发BFC</h4><ul>
 <li>根元素，即<code>html</code></li>
-<li><code>overflow</code>不为<code>visible</code></li>
+<li><code>overflow</code>不为<code>visible</code>(hidden、auto、scroll)</li>
 <li><code>float</code>的值不为<code>none</code></li>
 <li><code>display</code>的值为<code>inline-block</code>、<code>table-cell</code>、<code>table-caption</code></li>
+<li><code>display</code>为<code>flex</code>、<code>grid</code>、<code>flow-root</code>的元素(<code>flow-root</code>为专门设置BFC的属性值)</li>
 <li><code>position</code>的值为<code>absolute</code>或<code>fixed</code><h4 id="特性："><a href="#特性：" class="headerlink" title="特性："></a>特性：</h4></li>
 </ul>
 <ol>
@@ -35,7 +36,7 @@
 <p>这就是为什么利用BFC此特性解决浮动元素高度坍塌的问题。</p>
 </li>
 <li><p>BFC的区域不会与<code>float box</code>重叠；</p>
-<p>原理上还是相邻BFC不会相互影响，例子是两栏布局的实现，左侧<code>float：left</code>，右侧<code>overflow：auto</code>。</p>
+<p>例子是两栏布局的实现，左侧<code>float：left</code>，右侧<code>overflow：auto</code>。</p>
 </li>
 </ol>
 <p>作者：蛙人<br>链接：<a href="https://juejin.cn/post/6950082193632788493">https://juejin.cn/post/6950082193632788493</a></p>
@@ -986,6 +987,178 @@
       <tags>
         <tag>javascript</tag>
         <tag>箭头函数</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Javascript 什么是执行上下文</title>
+    <url>/2022/02/16/Javascript-%E4%BB%80%E4%B9%88%E6%98%AF%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/</url>
+    <content><![CDATA[<h3 id="什么是执行上下文"><a href="#什么是执行上下文" class="headerlink" title="什么是执行上下文"></a>什么是执行上下文</h3><p>当 <code>JS</code> 引擎解析到可执行代码片段（通常是函数调用阶段）的时候，就会先做一些执行前的准备工作，这个 <strong>“准备工作”</strong>，就叫做 <strong>“执行上下文(execution context 简称 <code>EC</code>)”</strong> 或者也可以叫做<strong>执行环境</strong>。</p>
+<p><strong>执行上下文</strong> 为我们的可执行代码块提供了执行前的必要准备工作，例如变量对象的定义、作用域链的扩展、提供调用者的对象引用等信息。</p>
+<h3 id="执行上下文类型"><a href="#执行上下文类型" class="headerlink" title="执行上下文类型"></a>执行上下文类型</h3><p>在 <code>ES3</code> 中规定了 </p>
+<ol>
+<li><strong>全局执行上下文</strong>：默认执行上下文，一开始就会被压到执行栈最底部</li>
+<li><strong>函数执行上下文</strong>：函数被调用时创建（不管这个函数是不是被重复调用的）</li>
+<li><strong>Eval 函数执行上下文</strong>：执行在 <code>eval</code> 函数内部的代码也会有它属于自己的执行上下文，但由于并不经常使用 <code>eval</code>，所以在这里不做分析。</li>
+</ol>
+<h3 id="ES3-执行上下文的内容"><a href="#ES3-执行上下文的内容" class="headerlink" title="ES3 执行上下文的内容"></a>ES3 执行上下文的内容</h3><h4 id="变量对象-variable-object-简称-VO"><a href="#变量对象-variable-object-简称-VO" class="headerlink" title="变量对象(variable object 简称 VO)"></a>变量对象(<code>variable object</code> 简称 <code>VO</code>)</h4><p>简单说就是建立一个对象VO，内部的参数为三种：</p>
+<p><img src="/images/%E5%8F%98%E9%87%8F%E5%AF%B9%E8%B1%A1.png" alt="变量对象"></p>
+<ul>
+<li><p>全局上下文的变量对象就是全局对象，对于浏览器来说就是<code>window</code>对象</p>
+</li>
+<li><p>函数执行上下文的变量对象(VO)，只有在函数被调用时，VO 被激活成<strong>活动对象</strong>(AO)，才能访问到其中额属性和方法</p>
+</li>
+</ul>
+<p><strong>有一点需要注意，只有函数声明（function declaration）会被加入到变量对象中，而函数表达式（function expression）会被忽略。</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 函数声明</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line"><span class="comment">// 函数表达式</span></span><br><span class="line"><span class="comment">// b是变量声明，会被加入变量对象，但是后面的function不会被加入变量对象</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="keyword">function</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自执行函数/立即调用函数表达式（Immediately Invoked Function Expression 简写 IIFE） -- 闭包</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">p</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(a)</span><br><span class="line">&#125;)()</span><br><span class="line"><span class="comment">// 输出 1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="活动对象（-activation-object-简称-AO）"><a href="#活动对象（-activation-object-简称-AO）" class="headerlink" title="活动对象（ activation object 简称 AO）"></a>活动对象（ <code>activation object</code> 简称 <code>AO</code>）</h4><p>函数进入执行阶段时，原本不能访问的变量对象被激活成为一个活动对象，自此，我们可以访问到其中的各种属性。</p>
+<blockquote>
+<p>其实变量对象和活动对象是一个东西，只不过处于不同的状态和阶段而已。</p>
+</blockquote>
+<h4 id="作用域链"><a href="#作用域链" class="headerlink" title="作用域链"></a>作用域链</h4><p><strong>作用域</strong>规定了如何查找变量，也就是确定当前执行代码对变量的访问权限。变量的查找顺序为：</p>
+<p><img src="/images/%E6%9F%A5%E6%89%BE%E5%8F%98%E9%87%8F.png" alt="查找变量顺序"></p>
+<p>这样由多个执行上下文的变量对象构成的链表就是 <strong>作用域链</strong></p>
+<p><strong>函数的作用域在函数创建时就已经确定了</strong>，<strong>函数创建时</strong>，内部通过名为 <code>[[scope]]</code> 的内部属性保存所有父变量对象到其中；<strong>函数执行时</strong>，会创建一个执行环境，然后通过复制函数的 <code>[[scope]]</code> 属性中的对象构建起执行环境的作用域链，然后，变量对象 <code>VO</code> 被激活生成 <code>AO</code> 并添加到作用域链的前端，完整作用域链创建完成：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="title class_">Scope</span> = [<span class="variable constant_">AO</span>].<span class="title function_">concat</span>([[<span class="title class_">Scope</span>]]);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="调用者信息（当前可执行代码块的调用者，this）"><a href="#调用者信息（当前可执行代码块的调用者，this）" class="headerlink" title="调用者信息（当前可执行代码块的调用者，this）"></a>调用者信息（当前可执行代码块的调用者，this）</h4><p>如果当前函数被作为对象方法调用或使用 <code>bind</code> <code>call</code> <code>apply</code> 等 <code>API</code> 进行委托调用，则将当前代码块的调用者信息（<code>this value</code>）存入当前执行上下文，否则默认为全局对象调用。</p>
+<h4 id="执行上下文数据结构模拟"><a href="#执行上下文数据结构模拟" class="headerlink" title="执行上下文数据结构模拟"></a>执行上下文数据结构模拟</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">executionContext：&#123;</span><br><span class="line">  [variable object | activation object]：&#123;</span><br><span class="line">    <span class="variable language_">arguments</span>,</span><br><span class="line">    <span class="attr">variables</span>: [...],</span><br><span class="line">    <span class="attr">funcions</span>: [...]</span><br><span class="line">  &#125;,</span><br><span class="line">  scope <span class="attr">chain</span>: variable object + all parents scopes</span><br><span class="line">  <span class="attr">thisValue</span>: context object</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ES3执行上下文的声明周期"><a href="#ES3执行上下文的声明周期" class="headerlink" title="ES3执行上下文的声明周期"></a>ES3执行上下文的声明周期</h3><h4 id="创建阶段"><a href="#创建阶段" class="headerlink" title="创建阶段"></a>创建阶段</h4><p><strong>函数调用时但未执行函数体内的代码的这段时间</strong></p>
+<p>创建阶段就是对上述的变量对象、作用域链、调用者this进行创建</p>
+<h4 id="执行阶段"><a href="#执行阶段" class="headerlink" title="执行阶段"></a>执行阶段</h4><p>这个阶段js代码逐条执行，对创建阶段创建的这些变量进行赋值和顺着作用域链访问。</p>
+<p>需要注意的是，该阶段会把执行上下文压入执行栈，该执行上下文有内部函数调用时，又会创建新的执行上下文，交出控制权。</p>
+<h4 id="销毁阶段"><a href="#销毁阶段" class="headerlink" title="销毁阶段"></a>销毁阶段</h4><p>函数执行完，当前执行上下文弹出执行栈并销毁，控制权交给执行栈上一层的执行上下文</p>
+<blockquote>
+<p>闭包情况不同</p>
+</blockquote>
+<h3 id="ES5的执行上下文"><a href="#ES5的执行上下文" class="headerlink" title="ES5的执行上下文"></a>ES5的执行上下文</h3><p>去除了 变量对象 和 活动对象的概念，以<strong>词法环境组件</strong> <strong>（</strong> <strong><code>LexicalEnvironment component</code>）</strong> 和 <strong>变量环境组件****（</strong> <strong><code>VariableEnvironment component</code>）</strong>替代。</p>
+<p>数据结构模拟如下</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="title class_">ExecutionContext</span> = &#123;</span><br><span class="line">  <span class="title class_">ThisBinding</span> = <span class="language-xml"><span class="tag">&lt;<span class="name">this</span> <span class="attr">value</span>&gt;</span>,</span></span><br><span class="line"><span class="language-xml">  // 词法环境</span></span><br><span class="line"><span class="language-xml">  LexicalEnvironment = &#123; ... &#125;,</span></span><br><span class="line"><span class="language-xml">  // 变量环境</span></span><br><span class="line"><span class="language-xml">  VariableEnvironment = &#123; ... &#125;,</span></span><br><span class="line"><span class="language-xml">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="词法环境"><a href="#词法环境" class="headerlink" title="词法环境"></a>词法环境</h4><p><strong>环境记录器</strong>：存储变量和函数声明的实际位置。</p>
+<p><strong>外部环境的引用</strong>：意味着它可以访问其父级词法环境（作用域）。</p>
+<p>数据结构模拟如下：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="title class_">LexicalEnvironment</span> = &#123;</span><br><span class="line">  <span class="comment">//环境记录器 </span></span><br><span class="line">  <span class="title class_">EnvironmentRecord</span>:&#123;&#125;,</span><br><span class="line">  <span class="comment">// 外部环境的引用</span></span><br><span class="line">  <span class="attr">outer</span>: &lt;<span class="literal">null</span>&gt; | 父级词法环境</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>词法环境分</li>
+</ul>
+<p>​        <strong>全局环境</strong>（全局上下文中的词法环境）；</p>
+<p>​        <strong>函数环境</strong>（函数上下文的词法环境）</p>
+<ul>
+<li>环境记录器分</li>
+</ul>
+<p>​        <strong>声明式环境记录器</strong>存储变量、函数和参数；</p>
+<p>​        <strong>对象环境记录器</strong>用来定行下文义出现在<strong>全局上下文</strong>中的变量和函数的关系。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 全局环境</span></span><br><span class="line"><span class="title class_">GlobalExectionContext</span> = &#123;</span><br><span class="line">  <span class="title class_">LexicalEnvironment</span>: &#123;</span><br><span class="line">    <span class="title class_">EnvironmentRecord</span>: &#123;</span><br><span class="line">      <span class="title class_">Type</span>: <span class="string">&quot;Object&quot;</span>,</span><br><span class="line">      <span class="comment">// 在这里绑定标识符</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 全局环境没有外部环境引用，所以为null</span></span><br><span class="line">    <span class="attr">outer</span>: &lt;<span class="literal">null</span>&gt; </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 函数环境</span></span><br><span class="line"><span class="title class_">FunctionExectionContext</span> = &#123;</span><br><span class="line">  <span class="title class_">LexicalEnvironment</span>: &#123;</span><br><span class="line">    <span class="comment">// 声明式环境记录器</span></span><br><span class="line">    <span class="title class_">EnvironmentRecord</span>: &#123;</span><br><span class="line">      <span class="title class_">Type</span>: <span class="string">&quot;Declarative&quot;</span>,</span><br><span class="line">      <span class="comment">// 在这里绑定标识符</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 函数的外部环境引用为父级词法环境或者全局词法环境</span></span><br><span class="line">    <span class="attr">outer</span>: <span class="language-xml"><span class="tag">&lt;<span class="name">Global</span> <span class="attr">or</span> <span class="attr">outer</span> <span class="attr">function</span> <span class="attr">environment</span> <span class="attr">reference</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">  &#125;</span></span><br><span class="line"><span class="language-xml">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>另外，函数环境的声明式环境记录器中包含一个<code>arguments</code> 对象，和函数的传参相关，用来存储索引和参数的映射</p>
+</blockquote>
+<h4 id="变量环境"><a href="#变量环境" class="headerlink" title="变量环境"></a>变量环境</h4><p>变量环境也是一种词法环境。但由于ES6 中定义了const 和 let，所以：</p>
+<p>词法环境主要存储（<code>let</code> 和 <code>const</code>）绑定的函数声明和变量</p>
+<p>变量环境存储 <code>var</code> 绑定的函数声明和变量</p>
+<p>所以根据词法环境和变量环境，结合实际的变量函数的声明，数据结构模拟如下：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">const</span> b = <span class="number">30</span>;</span><br><span class="line"><span class="keyword">var</span> c;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">multiply</span>(<span class="params">e, f</span>) &#123;</span><br><span class="line"> <span class="keyword">var</span> g = <span class="number">20</span>;</span><br><span class="line"> <span class="keyword">return</span> e * f * g;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">c = <span class="title function_">multiply</span>(<span class="number">20</span>, <span class="number">30</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 全局环境</span></span><br><span class="line"><span class="title class_">GlobalExectionContext</span> = &#123;</span><br><span class="line">  <span class="comment">// 绑定this，全局，浏览器中为window</span></span><br><span class="line">  <span class="title class_">ThisBinding</span>: &lt;Global Object&gt;,</span><br><span class="line">  // 词法环境</span><br><span class="line">  LexicalEnvironment: &#123;</span><br><span class="line">  	// 全局环境中的环境记录器为对象环境记录器</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">      Type: &quot;Object&quot;,</span><br><span class="line">  		// let const定义的变量，表示 未初始化</span><br><span class="line">      a: &lt; uninitialized &gt;,</span><br><span class="line">      b: &lt; uninitialized &gt;,</span><br><span class="line">      multiply: &lt; func &gt;</span><br><span class="line">    &#125;</span><br><span class="line">		// 全局环境中的外部环境引用为 null</span><br><span class="line">    outer: &lt;null&gt;</span><br><span class="line">  &#125;,</span><br><span class="line">	// 变量环境</span><br><span class="line">  VariableEnvironment: &#123;</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">      Type: &quot;Object&quot;,</span><br><span class="line">      // var 定义的变量，因为变量提升，所以是undefined</span><br><span class="line">      c: undefined,</span><br><span class="line">    &#125;</span><br><span class="line">    outer: &lt;null&gt;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 函数环境 -- 函数引用后到函数执行前创建</span><br><span class="line">FunctionExectionContext = &#123;</span><br><span class="line">  ThisBinding: &lt;Global Object&gt;,</span><br><span class="line">  LexicalEnvironment: &#123;</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">  		// 声明式环境记录器</span><br><span class="line">      Type: &quot;Declarative&quot;,</span><br><span class="line">      // 记录函数传参</span><br><span class="line">      Arguments: &#123;0: 20, 1: 30, length: 2&#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    outer: &lt;GlobalLexicalEnvironment&gt;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">	VariableEnvironment: &#123;</span><br><span class="line">    EnvironmentRecord: &#123;</span><br><span class="line">      Type: &quot;Declarative&quot;,</span><br><span class="line">      g: undefined</span><br><span class="line">    &#125;,</span><br><span class="line">    outer: &lt;GlobalLexicalEnvironment&gt;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行上下文栈"><a href="#执行上下文栈" class="headerlink" title="执行上下文栈"></a>执行上下文栈</h3><p>顾名思义，执行上下文栈是栈结构的，因此遵循 <code>LIFO</code>（后进先出）的特性，代码执行期间创建的所有执行上下文，都会交给执行上下文栈进行管理。</p>
+<p>当 JS 引擎开始解析脚本代码时，会首先创建一个<strong>全局执行上下文</strong>，压入栈底（这个全局执行上下文从创建一直到程序销毁，都会存在于栈的底部）。</p>
+<p>每当引擎发现一处函数调用，就会创建一个新的<strong>函数执行上下文</strong>压入栈内，并将控制权交给该上下文，待函数执行完成后，即将该执行上下文从栈内弹出销毁，将控制权重新给到栈内上一个执行上下文。</p>
+<h3 id="栈溢出经常出现在递归中"><a href="#栈溢出经常出现在递归中" class="headerlink" title="栈溢出经常出现在递归中"></a>栈溢出经常出现在递归中</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者：不写bug的米公子<br>链接：<a href="https://juejin.cn/post/6844904158957404167">https://juejin.cn/post/6844904158957404167</a></p>
+<p>作者：子非<br>链接：<a href="https://juejin.cn/post/6844903682283143181">https://juejin.cn/post/6844903682283143181</a></p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Javascript 作用域和闭包</title>
+    <url>/2022/02/16/Javascript-%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8C%E9%97%AD%E5%8C%85/</url>
+    <content><![CDATA[<h3 id="什么是作用域"><a href="#什么是作用域" class="headerlink" title="什么是作用域"></a>什么是作用域</h3><p><strong>作用域</strong> 指程序中定义变量的区域，它决定了当前执行代码对变量的访问权限。</p>
+<p><strong>全局作用域</strong>：程序的最外层作用域，一直存在</p>
+<p><strong>函数作用域</strong>：<strong>函数定义时</strong>创建的作用域，包含在父级/全局作用域内</p>
+<p>由于作用域的限制，每段独立的执行代码块只能访问自己作用域和外层作用域中的变量，无法访问到内层作用域的变量。</p>
+<h3 id="作用域链"><a href="#作用域链" class="headerlink" title="作用域链"></a>作用域链</h3><p>当本地作用域内找不到目标变量时，就需要去查找父级作用域内是否存在目标变量，一直到全局作用域。我们把这种作用域的嵌套机制，称为 作用域链。</p>
+<p><strong>需要注意的是，函数的参数也在函数作用域内</strong></p>
+<h3 id="词法作用域"><a href="#词法作用域" class="headerlink" title="词法作用域"></a>词法作用域</h3><p>词法作用域也叫静态作用域，是作用域的一种模型或者机制，例如规定函数在定义时确定其作用域。</p>
+<h3 id="块级作用域"><a href="#块级作用域" class="headerlink" title="块级作用域"></a>块级作用域</h3><p>简单来说，花括号内 <code>&#123;...&#125;</code> 的区域就是块级作用域区域。</p>
+<p><code>javascript</code> 中大部分情况下，只有两种作用域类型：<strong>全局作用域</strong> 和 <strong>函数作用域</strong>，那么 <code>javascript</code> 中的块级作用域呢？</p>
+<p>这里需要分<code>let</code> 和 <code>var</code></p>
+<ul>
+<li><code>let</code>  、<code>const</code> 所声明的变量会创建自己的块级作用域，创建的作用域是定义它的块级代码及其中包括的子块中，且无法自动往全局变量 <code>window</code> 上绑定属性。</li>
+<li><code>var</code> 定义的变量，作用域为定义它的函数，或者全局，并且是能自动往全局对象 <code>window</code> 上绑定属性的。</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> a = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// ReferenceError</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="创建作用域"><a href="#创建作用域" class="headerlink" title="创建作用域"></a>创建作用域</h3><ol>
+<li><p>定义函数，创建函数作用域</p>
+</li>
+<li><p>使用 <code>let</code> 和 <code>const</code> 创建块级作用域</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(i); <span class="comment">// ReferenceError</span></span><br></pre></td></tr></table></figure></li>
+<li><p><code>try catch</code> 创建作用域，<code>err</code> 仅存在于 <code>catch</code> 子句中</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line"> <span class="title function_">undefined</span>(); <span class="comment">// 强制产生异常</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (err) &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>( err ); <span class="comment">// TypeError: undefined is not a function</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>( err ); <span class="comment">// ReferenceError: `err` not found</span></span><br></pre></td></tr></table></figure></li>
+<li><p><code>eval</code>或者<code>with</code>，不推荐</p>
+</li>
+</ol>
+<h3 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h3><p>能够访问其他函数内部变量的函数，被称为 <strong>闭包</strong>。</p>
+<h3 id="闭包的应用场景"><a href="#闭包的应用场景" class="headerlink" title="闭包的应用场景"></a>闭包的应用场景</h3><h4 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 代理函数仅作为单例的管控</span></span><br><span class="line"><span class="keyword">let</span> <span class="title class_">ProxyCreateSingleton</span> = (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="keyword">let</span> instance</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params">name</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(instance) <span class="keyword">return</span> instance;</span><br><span class="line">    <span class="keyword">return</span> instance = <span class="keyword">new</span> <span class="title class_">Singleton</span>(name)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)()</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Singleton</span> = <span class="keyword">function</span>(<span class="params">name</span>)&#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">name</span> = name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">Singleton</span>.<span class="property">property</span>.<span class="property">getName</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">name</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Winner</span> = <span class="keyword">new</span> <span class="title class_">ProxyCreateSingleton</span>(<span class="string">&#x27;Winner&#x27;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="title class_">Looser</span> = <span class="keyword">new</span> <span class="title class_">ProxyCreateSingleton</span>(<span class="string">&#x27;Looser&#x27;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Winner</span> === <span class="title class_">Looser</span>); <span class="comment">// true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Winner</span>.<span class="title function_">getName</span>());  <span class="comment">// &#x27;Winner&#x27;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Looser</span>.<span class="title function_">getName</span>());  <span class="comment">// &#x27;Winner&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="模拟私有属性"><a href="#模拟私有属性" class="headerlink" title="模拟私有属性"></a>模拟私有属性</h4><p><code>javascript</code> 没有 <code>java</code> 中那种 <code>public</code> <code>private</code> 的访问权限控制，对象中的所用方法和属性均可以访问，这就造成了安全隐患，内部的属性任何开发者都可以随意修改。虽然语言层面不支持私有属性的创建，但是我们可以用闭包的手段来模拟出私有属性：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 模拟私有属性</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">getGeneratorFunc</span> () &#123;</span><br><span class="line">  <span class="keyword">var</span> _name = <span class="string">&#x27;John&#x27;</span>;</span><br><span class="line">  <span class="keyword">var</span> _age = <span class="number">22</span>;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="attr">getName</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;<span class="keyword">return</span> _name;&#125;,</span><br><span class="line">      <span class="attr">getAge</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;<span class="keyword">return</span> _age;&#125;</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = <span class="title function_">getGeneratorFunc</span>()();</span><br><span class="line">obj.<span class="title function_">getName</span>(); <span class="comment">// John</span></span><br><span class="line">obj.<span class="title function_">getAge</span>(); <span class="comment">// 22</span></span><br><span class="line">obj.<span class="property">_age</span>; <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="函数柯里化"><a href="#函数柯里化" class="headerlink" title="函数柯里化"></a>函数柯里化</h4><blockquote>
+<p>把一个多参数的函数转换成一系列使用一个参数的函数的技术</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 柯里化前</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params">a,b,c,d,e</span>)&#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(a, b, c, d, e)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 生成柯里化函数</span></span><br><span class="line"><span class="keyword">let</span> _fn = <span class="title function_">curry</span>(fn)</span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>);     <span class="comment">// print: 1,2,3,4,5</span></span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>)(<span class="number">2</span>)(<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>);   <span class="comment">// print: 1,2,3,4,5</span></span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>,<span class="number">2</span>)(<span class="number">3</span>,<span class="number">4</span>)(<span class="number">5</span>);   <span class="comment">// print: 1,2,3,4,5</span></span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>)(<span class="number">2</span>)(<span class="number">3</span>)(<span class="number">4</span>)(<span class="number">5</span>); <span class="comment">// print: 1,2,3,4,5</span></span><br></pre></td></tr></table></figure>
+
+<p>具体封装</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 函数的 length 属性，获取函数的形参个数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">curry</span>(<span class="params">fn, len = fn.length</span>)&#123;</span><br><span class="line">  <span class="keyword">return</span> _curry.<span class="title function_">call</span>(<span class="variable language_">this</span>, fn, len)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">_curry</span>(<span class="params">fn, len, ...args</span>)&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params">...params</span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> _args = [...args, ...params]</span><br><span class="line">    <span class="keyword">if</span>(_args.<span class="property">length</span> &gt;= len)&#123;</span><br><span class="line">      <span class="keyword">return</span> fn.<span class="title function_">apply</span>(<span class="variable language_">this</span>, _args)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> _curry.<span class="title function_">call</span>(<span class="variable language_">this</span>, fn, len, ..._args)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> _fn = <span class="title function_">curry</span>(<span class="keyword">function</span>(<span class="params">a,b,c,d,e</span>)&#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(a,b,c,d,e)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>);     <span class="comment">// print: 1,2,3,4,5</span></span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>)(<span class="number">2</span>)(<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>);   <span class="comment">// print: 1,2,3,4,5</span></span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>,<span class="number">2</span>)(<span class="number">3</span>,<span class="number">4</span>)(<span class="number">5</span>);   <span class="comment">// print: 1,2,3,4,5</span></span><br><span class="line"><span class="title function_">_fn</span>(<span class="number">1</span>)(<span class="number">2</span>)(<span class="number">3</span>)(<span class="number">4</span>)(<span class="number">5</span>); <span class="comment">// print: 1,2,3,4,5</span></span><br></pre></td></tr></table></figure>
+
+<p>柯里化的优势之一就是 <strong>参数的服用</strong>，即可以通过传入不同的参数来生成新的函数，例如</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">typeOf</span> (value) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">obj</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> toString = <span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">toString</span>;</span><br><span class="line">        <span class="keyword">const</span> map = &#123;</span><br><span class="line">            <span class="string">&#x27;[object Boolean]&#x27;</span>	 : <span class="string">&#x27;boolean&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object Number]&#x27;</span> 	 : <span class="string">&#x27;number&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object String]&#x27;</span> 	 : <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object Function]&#x27;</span>  : <span class="string">&#x27;function&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object Array]&#x27;</span>     : <span class="string">&#x27;array&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object Date]&#x27;</span>      : <span class="string">&#x27;date&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object RegExp]&#x27;</span>    : <span class="string">&#x27;regExp&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object Undefined]&#x27;</span> : <span class="string">&#x27;undefined&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object Null]&#x27;</span>      : <span class="string">&#x27;null&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;[object Object]&#x27;</span> 	 : <span class="string">&#x27;object&#x27;</span></span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">return</span> map[toString.<span class="title function_">call</span>(obj)] === value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 参数的服用</span></span><br><span class="line"><span class="keyword">var</span> isNumber = <span class="title function_">typeOf</span>(<span class="string">&#x27;number&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> isFunction = <span class="title function_">typeOf</span>(<span class="string">&#x27;function&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> isRegExp = <span class="title function_">typeOf</span>(<span class="string">&#x27;regExp&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="title function_">isNumber</span>(<span class="number">0</span>); <span class="comment">// =&gt; true</span></span><br><span class="line"><span class="title function_">isFunction</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;&#125;); <span class="comment">// true</span></span><br><span class="line"><span class="title function_">isRegExp</span>(&#123;&#125;); <span class="comment">// =&gt; false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 正则判断也可以用上面的方式，通过传入判断手机号和邮箱的正则来生成两个函数</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="闭包的问题-–-内存泄漏"><a href="#闭包的问题-–-内存泄漏" class="headerlink" title="闭包的问题 – 内存泄漏"></a>闭包的问题 – 内存泄漏</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>( a );</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> bar;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> baz = <span class="title function_">foo</span>();</span><br><span class="line"><span class="title function_">baz</span>(); <span class="comment">// 这就形成了一个闭包</span></span><br></pre></td></tr></table></figure>
+
+<p><code>javascript</code> 内部的垃圾回收机制用的是<strong>引用计数收集</strong>：即当内存中的一个变量被引用一次，计数就加一。垃圾回收机制会以固定的时间轮询这些变量，将计数为 <code>0</code> 的变量标记为失效变量并将之清除从而释放内存。</p>
+<p> <code>foo</code> 函数作用域隔绝了外部环境，所有变量引用都在函数内部完成，<code>foo</code> 运行完成以后，内部的变量就应该被销毁，内存被回收。然而闭包导致了全局作用域始终存在一个 <code>baz</code> 的变量在引用着 <code>foo</code> 内部的 <code>bar</code> 函数，这就意味着 <code>foo</code> 内部定义的 <code>bar</code> 函数引用数始终为 <code>1</code>，垃圾运行机制就无法把它销毁。更糟糕的是，<code>bar</code> 有可能还要使用到父作用域 <code>foo</code> 中的变量信息，那它们自然也不能被销毁… JS 引擎无法判断你什么时候还会调用闭包函数，只能一直让这些数据占用着内存。</p>
+<blockquote>
+<p>这种由于闭包使用过度而导致的内存占用无法释放的情况，我们称之为：内存泄露。</p>
+</blockquote>
+<h4 id="内存泄漏的其他情况"><a href="#内存泄漏的其他情况" class="headerlink" title="内存泄漏的其他情况"></a>内存泄漏的其他情况</h4><ul>
+<li><strong>全局变量的无意创建</strong></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params"></span>) &#123;</span><br><span class="line">  b = <span class="number">2</span>;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(b);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">foo</span>(); <span class="comment">// 2</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(b); <span class="comment">// 2 变量b泄漏到全局中</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>DOM</code> 的事件绑定，移除 <code>DOM</code> 元素前如果忘记了注销掉其中绑定的事件方法，也会造成内存泄露</li>
+</ul>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
+<li>使用严格模式</li>
+<li>关注 <code>DOM</code> 生命周期，在销毁阶段记得解绑相关事件</li>
+<li>避免过度使用闭包</li>
+</ol>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者：不写bug的米公子<br>链接：<a href="https://juejin.cn/post/6844904165672484871">https://juejin.cn/post/6844904165672484871</a></p>
+<p>作者：云中桥<br>链接：<a href="https://juejin.cn/post/6844903882208837645">https://juejin.cn/post/6844903882208837645</a></p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
+        <tag>面试</tag>
       </tags>
   </entry>
 </search>
