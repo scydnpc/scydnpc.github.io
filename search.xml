@@ -915,10 +915,28 @@
   <entry>
     <title>地址</title>
     <url>/2021/12/03/%E5%9C%B0%E5%9D%80/</url>
-    <content><![CDATA[<h2 id="Blog"><a href="#Blog" class="headerlink" title="Blog"></a>Blog</h2><p>Hongwei Blog： <a href="https://yin-hongwei.github.io/">https://yin-hongwei.github.io/</a><br>飞鸟：<a href="https://lzxjack.top/">https://lzxjack.top/</a><br>Hexo 博客主题个性化：<a href="https://www.itrhx.com/2018/08/27/A04-Hexo-blog-topic-personalization/">https://www.itrhx.com/2018/08/27/A04-Hexo-blog-topic-personalization/</a></p>
-<h2 id="UI框架"><a href="#UI框架" class="headerlink" title="UI框架"></a>UI框架</h2><h3 id="1-Soybean-Admin"><a href="#1-Soybean-Admin" class="headerlink" title="1.Soybean Admin"></a>1.Soybean Admin</h3><p>简介：Soybean Admin 是一个基于 Vue3、Vite、Naive UI、TypeScript 的中后台解决方案，它使用了最新的前端技术栈，并提炼了典型的业务模型，页面，包括二次封装组件、动态菜单、权限校验、粒子化权限控制等功能，它可以帮助你快速搭建企业级中后台项目，相信不管是从新技术使用还是其他方面，都能帮助到你。<br>地址：<a href="https://github.com/honghuangdc/soybean-admin">https://github.com/honghuangdc/soybean-admin</a></p>
-<h2 id="CSS-样式类"><a href="#CSS-样式类" class="headerlink" title="CSS 样式类"></a>CSS 样式类</h2><p>1.渐变按钮 <a href="https://gradientbuttons.colorion.co/">https://gradientbuttons.colorion.co/</a></p>
-<h2 id="icon"><a href="#icon" class="headerlink" title="icon"></a>icon</h2><p>1.xicons <a href="https://www.xicons.org/#/">https://www.xicons.org/#/</a></p>
+    <content><![CDATA[<h1 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h1><h2 id="Blog"><a href="#Blog" class="headerlink" title="Blog"></a>Blog</h2><p>Hongwei Blog： <a href="https://yin-hongwei.github.io/">https://yin-hongwei.github.io/</a><br>飞鸟：<a href="https://lzxjack.top/">https://lzxjack.top/</a><br>Hexo 博客主题个性化：<a href="https://www.itrhx.com/2018/08/27/A04-Hexo-blog-topic-personalization/">https://www.itrhx.com/2018/08/27/A04-Hexo-blog-topic-personalization/</a><br>Mask的前端笔记: <a href="https://jsmask.gitee.io/note_blob/">https://jsmask.gitee.io/note_blob/</a><br>web全栈体系：<a href="https://hejialianghe.gitee.io/guide/">https://hejialianghe.gitee.io/guide/</a></p>
+<h2 id="UI框架"><a href="#UI框架" class="headerlink" title="UI框架"></a>UI框架</h2><h3 id="1-Soybean-Admin"><a href="#1-Soybean-Admin" class="headerlink" title="1.Soybean Admin"></a>1.Soybean Admin</h3><p>简介：Soybean Admin 是一个基于 Vue3、Vite、Naive UI、TypeScript 的中后台解决方案，它使用了最新的前端技术栈，并提炼了典型的业务模型，页面，包括二次封装组件、动态菜单、权限校验、粒子化权限控制等功能，它可以帮助你快速搭建企业级中后台项目，相信不管是从新技术使用还是其他方面，都能帮助到你。  </p>
+<p>地址：<a href="https://github.com/honghuangdc/soybean-admin">https://github.com/honghuangdc/soybean-admin</a></p>
+<h2 id="JS-相关"><a href="#JS-相关" class="headerlink" title="JS 相关"></a>JS 相关</h2><ol>
+<li><code>js</code>规范：<a href="https://www.kancloud.cn/kancloud/javascript-style-guide/43119">https://www.kancloud.cn/kancloud/javascript-style-guide/43119</a></li>
+</ol>
+<h2 id="CSS-样式类"><a href="#CSS-样式类" class="headerlink" title="CSS 样式类"></a>CSS 样式类</h2><ol>
+<li>渐变按钮： <a href="https://gradientbuttons.colorion.co/">https://gradientbuttons.colorion.co/</a></li>
+</ol>
+<h2 id="icon"><a href="#icon" class="headerlink" title="icon"></a>icon</h2><ol>
+<li>xicons： <a href="https://www.xicons.org/#/">https://www.xicons.org/#/</a></li>
+</ol>
+<h2 id="vue3-富文本"><a href="#vue3-富文本" class="headerlink" title="vue3 富文本"></a>vue3 富文本</h2><p><a href="https://imzbf.github.io/md-editor-v3/index">https://imzbf.github.io/md-editor-v3/index</a></p>
+<h2 id="技术网站文档"><a href="#技术网站文档" class="headerlink" title="技术网站文档"></a>技术网站文档</h2><ol>
+<li>lodash：<a href="https://www.lodashjs.com/">https://www.lodashjs.com/</a></li>
+<li>Vue 源码：<a href="https://ustbhuangyi.github.io/vue-analysis/">https://ustbhuangyi.github.io/vue-analysis/</a></li>
+<li>lodash 源码解读：<a href="https://github.com/yeyuqiudeng/pocket-lodash">https://github.com/yeyuqiudeng/pocket-lodash</a><h2 id="语言类网站"><a href="#语言类网站" class="headerlink" title="语言类网站"></a>语言类网站</h2><h3 id="1-万词王"><a href="#1-万词王" class="headerlink" title="1.万词王"></a>1.万词王</h3>简介：解决“舌尖现象”（tip-of-the-tongue，又称话到嘴边说不出来），即暂时性忘词的问题</li>
+</ol>
+<p>地址：<a href="https://github.com/thunlp/WantWords/blob/main/README_ZH.md">https://github.com/thunlp/WantWords/blob/main/README_ZH.md</a></p>
+<h2 id="面试类"><a href="#面试类" class="headerlink" title="面试类"></a>面试类</h2><ol>
+<li>语音打卡社群(JS每日一题)维护的前端面试题库：<a href="https://github.com/febobo/web-interview">https://github.com/febobo/web-interview</a></li>
+</ol>
 ]]></content>
       <categories>
         <category>杂</category>
