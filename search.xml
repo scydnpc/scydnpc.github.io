@@ -991,9 +991,28 @@
   <entry>
     <title>事件循环Eventloop</title>
     <url>/2021/09/07/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AFEventLoop/</url>
-    <content><![CDATA[<h3 id="1-javascript是单线程语言"><a href="#1-javascript是单线程语言" class="headerlink" title="1. javascript是单线程语言"></a>1. javascript是单线程语言</h3><h3 id="2-所有的线程，都是有同步队列，和异步队列"><a href="#2-所有的线程，都是有同步队列，和异步队列" class="headerlink" title="2. 所有的线程，都是有同步队列，和异步队列"></a>2. 所有的线程，都是有同步队列，和异步队列</h3><p>立即执行，如函数 是同步；promise，ajax为异步</p>
-<h3 id="3-任务队列-事件循环"><a href="#3-任务队列-事件循环" class="headerlink" title="3. 任务队列-事件循环"></a>3. 任务队列-事件循环</h3><p>同步任务会立刻执行，进入到主线程当中，异步任务会被放到任务队列（Event Queue）当中。<br>等待同步代码执行完毕后，返回来，再将异步中的任务放到主线程中执行,反复这样的循环，这就是事件循环。也就是先执行同步，返回来按照异步的顺序再次执行</p>
-<h3 id="4-宏观任务和微观任务（先执行微观任务，再执行宏观任务）"><a href="#4-宏观任务和微观任务（先执行微观任务，再执行宏观任务）" class="headerlink" title="4. 宏观任务和微观任务（先执行微观任务，再执行宏观任务）"></a>4. 宏观任务和微观任务（先执行微观任务，再执行宏观任务）</h3><p>宏观任务主要包含：setTimeout、setInterval、script(整体代码)、I/O、UI 交互事件、setImmediate(Node.js 环境)<br>微观任务主要包括：Promise、MutaionObserver、process.nextTick(Node.js 环境)</p>
+    <content><![CDATA[<h2 id="一、javascript是单线程语言"><a href="#一、javascript是单线程语言" class="headerlink" title="一、javascript是单线程语言"></a>一、javascript是单线程语言</h2><h2 id="二、所有的线程，都是有同步队列，和异步队列"><a href="#二、所有的线程，都是有同步队列，和异步队列" class="headerlink" title="二、所有的线程，都是有同步队列，和异步队列"></a>二、所有的线程，都是有同步队列，和异步队列</h2><p>立即执行，如函数 是同步；promise，ajax为异步</p>
+<h2 id="三、-任务队列-事件循环"><a href="#三、-任务队列-事件循环" class="headerlink" title="三、 任务队列-事件循环"></a>三、 任务队列-事件循环</h2><p>🔷 同步任务会立刻执行，进入到主线程当中，异步任务会被放到任务队列（Event Queue）当中。<br>🔷 等待同步代码执行完毕后，返回来，再将异步中的任务放到主线程中执行,反复这样的循环，这就是事件循环。也就是先执行同步，返回来按照异步的顺序再次执行</p>
+<h2 id="四、宏观任务和微观任务（先执行微观任务，再执行宏观任务）"><a href="#四、宏观任务和微观任务（先执行微观任务，再执行宏观任务）" class="headerlink" title="四、宏观任务和微观任务（先执行微观任务，再执行宏观任务）"></a>四、宏观任务和微观任务（先执行微观任务，再执行宏观任务）</h2><p>宏观任务主要包含：setTimeout、setInterval、script(整体代码)、I/O、UI 交互事件、setImmediate(Node.js 环境)<br>微观任务主要包括：Promise、MutaionObserver、process.nextTick(Node.js 环境)</p>
+<p>🌰</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>)</span><br><span class="line">  <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;setTimeout&quot;</span>)</span><br><span class="line">  &#125;, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title class_">Promise</span>.<span class="title function_">resolve</span>().<span class="title function_">then</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;promise&#x27;</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>先执行队列中的宏任务（script），</p>
+<p>遇到setTime加到队列中，微任务Promise等待同步任务执行完后再执行，</p>
+<p>script中的任务执行完毕，开始下一个宏任务（setTime）</p>
+<p>输出 1 &gt; promise &gt; setTimeout</p>
+<h2 id="五、浏览器"><a href="#五、浏览器" class="headerlink" title="五、浏览器"></a>五、浏览器</h2><p>浏览器（多进程）包含了<strong>Browser进程</strong>（浏览器的主进程）、<strong>第三方插件进程</strong>和<strong>GPU进程</strong>（浏览器渲染进程），其中<strong>GPU进程</strong>（多线程）和Web前端密切相关，包含以下线程：</p>
+<ul>
+<li><strong>GUI渲染线程</strong> （渲染DOM）</li>
+<li><strong>JS引擎线程</strong></li>
+<li><strong>事件触发线程</strong>（和EventLoop密切相关）</li>
+<li><strong>定时触发器线程</strong></li>
+<li><strong>异步HTTP请求线程</strong></li>
+</ul>
+<p>❗ <strong>GUI渲染线程</strong>和<strong>JS引擎线程</strong>是互斥的，为了防止DOM渲染的不一致性，其中一个线程执行时另一个线程会被挂起。</p>
+<p>❗ 同步任务在<strong>JS引擎线程</strong>（主线程）上执行，形成<strong>执行栈</strong></p>
+<p>❗ <strong>事件触发线程</strong>管理着一个<strong>任务队列</strong>（Task Queue）</p>
+<p>❗<strong>执行栈</strong>中的同步任务执行完毕，系统就会读取<strong>任务队列</strong>，如果有异步任务需要执行，将其加到主线程的<strong>执行栈</strong>并执行相应的异步任务。</p>
 ]]></content>
       <categories>
         <category>前端</category>
@@ -1524,6 +1543,91 @@
 <h3 id="弊端"><a href="#弊端" class="headerlink" title="弊端"></a>弊端</h3><p>因为需要进行装箱工作，所以会产生很多临时对象</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>作者：木子星兮<br>链接：<a href="https://juejin.cn/post/6844904081803182087">https://juejin.cn/post/6844904081803182087</a></p>
 <p>作者：前端小石头<br>链接：<a href="https://juejin.cn/post/7009659922342215688">https://juejin.cn/post/7009659922342215688</a></p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>vue nextTick</title>
+    <url>/2022/03/01/vue-nextTick/</url>
+    <content><![CDATA[<p>在搞懂Vue的<code>nextTick</code>前，需要先搞懂事件循环（Event Loop）</p>
+<p><a href="https://scydnpc.github.io/2021/09/07/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AFEventLoop/">事件循环Eventloop | 一 个 懒 人 的 博 客 (scydnpc.github.io)</a></p>
+<h2 id="Vue中的nextTick"><a href="#Vue中的nextTick" class="headerlink" title="Vue中的nextTick"></a>Vue中的nextTick</h2><p>当我们设置 <code>this.msg = &#39;some thing&#39; </code>的时候，Vue并没有马上去更新DOM数据，而是将这个操作放到一个<strong>队列</strong>中，等待<strong>同一事件循环中</strong>的所有数据变化完成之后，会将队列中的事件拿出来处理。如果我们重复执行的话，队列还会进行去重操作，提升性能。</p>
+<h3 id="简单理解源码"><a href="#简单理解源码" class="headerlink" title="简单理解源码"></a>简单理解源码</h3><p><code>/src/core/util/next-tick.js</code> 中有以下</p>
+<ul>
+<li> 全局变量：<code>callbacks</code>，</li>
+<li> 函数nextTick：将你需要执行的回调函数push到 <code>callbacks</code>中；执行 <code>timerFunc</code></li>
+<li> 先理解 <code>fullCallbacks</code>：内部就是把你的<strong>队列</strong><code>callbacks</code>数组复制一份，然后把  callbacks置为空，把复制的数组里面的函数都执行一遍，</li>
+<li> <code>timerFunc</code>：内部判断 <code>fullCallbacks</code> 是否在当前环境就支持，尝试使用原生的<code>Promise.then</code>（判断1）、<code>MutationObserver</code>（判断2）和 <code>setImmediate</code>（判断3），上述三个都不支持最后使用<code>setTimeout</code>（判断4），最终目的就是为了将<code>flushCallbacks</code>函数放入微任务(判断1和判断2)或者宏任务(判断3和判断4)</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">mounted () &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">msg</span> = <span class="string">&#x27;end&#x27;</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">  <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123; <span class="comment">// macroTask</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">  &#125;, <span class="number">0</span>)</span><br><span class="line">  <span class="title class_">Promise</span>.<span class="title function_">resolve</span>().<span class="title function_">then</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123; <span class="comment">//microTask</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;promise!&#x27;</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="variable language_">this</span>.$nextTick(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出 1 &gt; promise！&gt; 2 &gt; 3</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JavaScript-深浅拷贝</title>
+    <url>/2022/02/28/JavaScript-%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>JavaScript 的数据类型分为基本数据类型和引用数据类型。对于基本数据类型的拷贝，并没有深浅拷贝的区别，我们所说的深浅拷贝都是对于引用数据类型而言的。</p>
+<h2 id="浅拷贝"><a href="#浅拷贝" class="headerlink" title="浅拷贝"></a>浅拷贝</h2><blockquote>
+<p>浅拷贝的意思就是只复制引用，而未复制真正的值。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> originArray = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</span><br><span class="line"><span class="keyword">const</span> originObj = &#123;<span class="attr">a</span>:<span class="string">&#x27;a&#x27;</span>,<span class="attr">b</span>:<span class="string">&#x27;b&#x27;</span>,<span class="attr">c</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],<span class="attr">d</span>:&#123;<span class="attr">dd</span>:<span class="string">&#x27;dd&#x27;</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> cloneArray = originArray;</span><br><span class="line"><span class="keyword">const</span> cloneObj = originObj;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cloneArray); <span class="comment">// [1,2,3,4,5]</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(originObj); <span class="comment">// &#123;a:&#x27;a&#x27;,b:&#x27;b&#x27;,c:Array[3],d:&#123;dd:&#x27;dd&#x27;&#125;&#125;</span></span><br><span class="line"></span><br><span class="line">cloneArray.<span class="title function_">push</span>(<span class="number">6</span>);</span><br><span class="line">cloneObj.<span class="property">a</span> = &#123;<span class="attr">aa</span>:<span class="string">&#x27;aa&#x27;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cloneArray); <span class="comment">// [1,2,3,4,5,6]</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(originArray); <span class="comment">// [1,2,3,4,5,6]</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cloneObj); <span class="comment">// &#123;a:&#123;aa:&#x27;aa&#x27;&#125;,b:&#x27;b&#x27;,c:Array[3],d:&#123;dd:&#x27;dd&#x27;&#125;&#125;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(originArray); <span class="comment">// &#123;a:&#123;aa:&#x27;aa&#x27;&#125;,b:&#x27;b&#x27;,c:Array[3],d:&#123;dd:&#x27;dd&#x27;&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的代码是最简单的利用 <code>=</code> 赋值操作符实现了一个浅拷贝，可以很清楚的看到，随着 <code>cloneArray</code> 和 <code>cloneObj</code> 改变，<code>originArray</code> 和 <code>originObj</code> 也随着发生了变化。</p>
+<h2 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h2><blockquote>
+<p>1️⃣ 深拷贝就是对目标的完全拷贝，不像浅拷贝那样只是复制了一层引用，就连值也都复制了。</p>
+<p>2️⃣ 只要进行了深拷贝，它们老死不相往来，谁也不会影响谁。</p>
+</blockquote>
+<h3 id="序列化与反序列化"><a href="#序列化与反序列化" class="headerlink" title="序列化与反序列化"></a>序列化与反序列化</h3><p><code>JSON.stringify</code> 是将一个 <code>JavaScript</code> 值转成一个 <code>JSON</code> 字符串。</p>
+<p><code>JSON.parse</code> 是将一个 <code>JSON</code> 字符串转成一个 <code>JavaScript</code> 值或对象。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 🌰</span></span><br><span class="line"><span class="keyword">const</span> originArray = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</span><br><span class="line"><span class="keyword">const</span> cloneArray = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(originArray));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cloneArray === originArray); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个方法只能适用于一些简单的情况。比如下面这样的一个对象就不适用：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> originObj = &#123;</span><br><span class="line">  <span class="attr">name</span>:<span class="string">&#x27;axuebin&#x27;</span>,</span><br><span class="line">  <span class="attr">sayHello</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Hello World&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(originObj); <span class="comment">// &#123;name: &quot;axuebin&quot;, sayHello: ƒ&#125;</span></span><br><span class="line"><span class="keyword">const</span> cloneObj = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(originObj));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cloneObj); <span class="comment">// &#123;name: &quot;axuebin&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 <code>MDN</code> 上找到了原因：**<code>undefined</code>、<code>function</code>、<code>symbol</code> 会在转换过程中被忽略**</p>
+<h3 id="递归实现"><a href="#递归实现" class="headerlink" title="递归实现"></a>递归实现</h3><blockquote>
+<p>递归的思想就很简单了，就是对每一层的数据都实现一次 <code>创建对象-&gt;对象赋值</code> 的操作</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">deepClone</span>(<span class="params">source</span>)&#123;</span><br><span class="line">  <span class="comment">// 判断复制的对象是数组还是对象</span></span><br><span class="line">  <span class="keyword">const</span> targetObj = source.<span class="property">constructor</span> === <span class="title class_">Array</span> ? [] : &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> key <span class="keyword">in</span> source)&#123;</span><br><span class="line">    <span class="comment">// 去除原型上自定义的参数</span></span><br><span class="line">    <span class="keyword">if</span>(source.<span class="property">hasOwnProperty</span>.(key))&#123;</span><br><span class="line">      <span class="comment">// 如果是对象，需要递归</span></span><br><span class="line">      <span class="keyword">if</span>(source[key] &amp;&amp; <span class="keyword">typeof</span> source[keys] === <span class="string">&#x27;object&#x27;</span>)&#123;</span><br><span class="line">        targetObj[key] = source.<span class="property">constructor</span> === <span class="title class_">Array</span> ? [] : &#123;&#125;</span><br><span class="line">        targetObj[key] = <span class="title function_">deepClone</span>(source[key])</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        targetObj[key] = source[key]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> targetdObj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于 <code>source.hasOwnProperty.(key)</code> </p>
+<p><code>hasOwnProperty()</code> 函数用于指示一个<strong>对象自身</strong>(<strong>不包括原型链</strong>)是否具有指定名称的属性，所以在这里，可以去除通过 <code>Object.prototype.xxx</code> 自定义的参数。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 🌰</span></span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;张三&quot;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">18</span>,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">sex</span> = <span class="string">&quot;男&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(key);</span><br><span class="line">  <span class="keyword">if</span> (<span class="title class_">Object</span>.<span class="property">hasOwnProperty</span>.<span class="title function_">call</span>(obj, key)) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;own: &quot;</span>, key);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// sex不会在if内打印</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="JavaScript-中的拷贝方法"><a href="#JavaScript-中的拷贝方法" class="headerlink" title="JavaScript 中的拷贝方法"></a>JavaScript 中的拷贝方法</h2><p>我们知道在 <code>JavaScript</code> 中，数组有两个方法 <code>concat</code> 和 <code>slice</code> 是可以实现对原数组的拷贝的，这两个方法都不会修改原数组，而是返回一个修改后的新数组。同时，ES6 中 引入了 <code>Object.assgn</code> 方法和 <code>...</code> 展开运算符也能实现对对象的拷贝。</p>
+<p><strong>那它们是浅拷贝还是深拷贝呢？</strong></p>
+<h3 id="cancat"><a href="#cancat" class="headerlink" title="cancat"></a>cancat</h3><blockquote>
+<p>该方法可以连接两个或者更多的数组，但是它不会修改已存在的数组，而是返回一个新数组。</p>
+</blockquote>
+<p>先说结论：**<code>concat</code> 只是对数组的第一层进行深拷贝。**</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 一层的时候</span></span><br><span class="line"><span class="keyword">const</span> originArray = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</span><br><span class="line"><span class="keyword">const</span> cloneArray = originArray.<span class="title function_">concat</span>();</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cloneArray === originArray); <span class="comment">// false</span></span><br><span class="line">cloneArray.<span class="title function_">push</span>(<span class="number">6</span>); <span class="comment">// [1,2,3,4,5,6]</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(originArray); [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 两层呢？</span></span><br><span class="line"><span class="keyword">const</span> originArray = [<span class="number">1</span>,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],&#123;<span class="attr">a</span>:<span class="number">1</span>&#125;];</span><br><span class="line"><span class="keyword">const</span> cloneArray = originArray.<span class="title function_">concat</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cloneArray === originArray); <span class="comment">// false</span></span><br><span class="line">cloneArray[<span class="number">0</span>] = <span class="number">2</span></span><br><span class="line">cloneArray[<span class="number">1</span>].<span class="title function_">push</span>(<span class="number">4</span>);</span><br><span class="line">cloneArray[<span class="number">2</span>].<span class="property">a</span> = <span class="number">2</span>; </span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(originArray); <span class="comment">// [1,[1,2,3,4],&#123;a:2&#125;]</span></span><br><span class="line"><span class="comment">// 第一层还是不受影响，但是第二层受影响</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="slice"><a href="#slice" class="headerlink" title="slice"></a>slice</h3><p><strong>结论：<code>slice</code> 只是对数组的第一层进行深拷贝。</strong></p>
+<h3 id="Object-assgin"><a href="#Object-assgin" class="headerlink" title="Object.assgin()"></a>Object.assgin()</h3><blockquote>
+<p>**<code>Object.assign() </code>**方法用于将所有可枚举属性的值从一个或多个源对象分配到目标对象。它将返回目标对象。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> a = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;zhangsan&quot;</span>,</span><br><span class="line">  <span class="attr">obj</span>: &#123;</span><br><span class="line">    <span class="attr">width</span>: <span class="string">&quot;120&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> b = &#123;</span><br><span class="line">  <span class="attr">age</span>: <span class="number">18</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> target = <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, a, b);</span><br><span class="line">target.<span class="property">name</span> = <span class="string">&#x27;lisi&#x27;</span></span><br><span class="line">target.<span class="property">obj</span>.<span class="property">width</span> = <span class="string">&quot;150&quot;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;target: &quot;</span>, target); <span class="comment">// name: &#x27;lisi&#x27;, width: 150</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// name: &#x27;zhangsan&#x27;, width: 150</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><code>Object.assign()</code> 拷贝的是属性值。假如源对象的属性值是一个指向对象的引用，它也只拷贝那个引用值。</strong></p>
+<h3 id="展开运算符"><a href="#展开运算符" class="headerlink" title="展开运算符"></a>展开运算符</h3><p><strong>结论：<code>...</code> 实现的是对象第一层的深拷贝。后面的只是拷贝的引用值。</strong></p>
+<h2 id="自己实现一层深拷贝，二层浅拷贝"><a href="#自己实现一层深拷贝，二层浅拷贝" class="headerlink" title="自己实现一层深拷贝，二层浅拷贝"></a>自己实现一层深拷贝，二层浅拷贝</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">shallowClone</span>(<span class="params">source</span>)&#123;</span><br><span class="line">  <span class="keyword">const</span> target = shallowClone.<span class="property">constructor</span> === <span class="title class_">Array</span> ? [] : &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span>(key <span class="keyword">in</span> source)&#123;</span><br><span class="line">    <span class="keyword">if</span>(sourcce.<span class="title function_">hasOwnProperty</span>(key))&#123;</span><br><span class="line">      target[key] = source[key]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://github.com/axuebin/articles/issues/20">JavaScript基础心法——深浅拷贝 · Issue #20 · axuebin/articles (github.com)</a></p>
 ]]></content>
       <categories>
         <category>前端</category>
